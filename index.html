@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haritham Oil Store - Management System</title>
+<style>
+:root{
+  --green:#245B32;--green2:#174323;--green3:#3B7A3E;
+  --cream:#FFF9C9;--gold:#E6C928;--gold2:#F5E76A;
+  --white:#fff;--bg:#F7F8EF;--text:#24352B;--muted:#718078;
+  --border:#E5E9E3;--red:#C84C4C;--orange:#D88A27;--blue:#4B7599;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+.hidden{display:none!important}
+
+
+/* HARITHAM BRANDING */
+.haritham-logo{display:block;width:100%;max-width:285px;height:86px;object-fit:cover;object-position:center;border-radius:12px;background:#fff;border:2px solid rgba(255,255,255,.45);margin-bottom:22px}
+.brand-logo{width:58px;height:44px;object-fit:cover;object-position:center;border-radius:7px;margin-right:10px;background:#fff}
+
+/* LOGIN */
+.login-page{min-height:100vh;background:linear-gradient(135deg,var(--cream),#eef4ed);display:flex}
+.login-left{width:52%;background:var(--green);color:#fff;padding:70px 8%;display:flex;align-items:center;position:relative;overflow:hidden}
+.login-left:before,.login-left:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.13);border-radius:50%}
+.login-left:before{width:650px;height:650px;right:-300px;top:-100px}
+.login-left:after{width:450px;height:450px;right:-180px;bottom:-180px}
+.login-brand{position:relative;z-index:2}
+.login-brand .mark{width:62px;height:62px;border-radius:18px;background:var(--gold);display:grid;place-items:center;font-size:34px;margin-bottom:25px}
+.login-brand h1{font-size:48px;line-height:1.05;margin-bottom:15px}
+.login-brand h1 span{color:var(--gold)}
+.login-brand p{color:#dce8df;max-width:470px;line-height:1.8}
+.login-points{margin-top:35px;display:grid;gap:13px}
+.login-points div{display:flex;align-items:center;gap:10px;color:#eaf2ec;font-size:14px}
+.login-points b{width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--green);display:grid;place-items:center}
+.login-right{width:48%;display:flex;align-items:center;justify-content:center;padding:30px}
+.login-box{width:min(420px,100%);background:#fff;border:1px solid var(--border);border-radius:24px;padding:38px;box-shadow:0 20px 60px rgba(23,74,46,.10)}
+.login-box .mini{color:var(--gold);font-size:11px;font-weight:900;letter-spacing:2px}
+.login-box h2{font-size:31px;color:var(--green);margin:7px 0 7px}
+.login-box>p{color:var(--muted);font-size:13px;margin-bottom:28px}
+.form-group{margin-bottom:16px}
+.form-group label{font-size:12px;font-weight:800;color:var(--green);display:block;margin-bottom:7px}
+.form-control{width:100%;height:45px;border:1px solid #dfe5df;border-radius:10px;padding:0 13px;outline:none;background:#fff}
+.form-control:focus{border-color:var(--gold)}
+.login-btn{width:100%;height:47px;border:0;border-radius:10px;background:var(--green);color:#fff;font-weight:800;margin-top:7px}
+.login-btn:hover{background:var(--green2)}
+.demo{margin-top:18px;background:var(--cream);padding:12px;border-radius:9px;font-size:11px;color:var(--muted);text-align:center}
+.demo b{color:var(--green)}
+
+/* APP */
+.app{display:none;min-height:100vh}
+.sidebar{width:255px;background:var(--green);position:fixed;left:0;top:0;bottom:0;color:#fff;z-index:100;display:flex;flex-direction:column}
+.brand{height:78px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand-mark{width:39px;height:39px;border-radius:11px;background:var(--gold);display:grid;place-items:center;margin-right:10px;font-size:21px}
+.brand-name{font-weight:900;font-size:17px}.brand-name small{display:block;color:#b9cfbf;font-size:8px;letter-spacing:2px;margin-top:2px}
+.nav{padding:16px 12px;overflow:auto;flex:1}
+.nav-section{font-size:9px;color:#9fbaa8;font-weight:900;letter-spacing:1.7px;padding:14px 12px 7px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#dce8df;font-size:13px;margin:2px 0;cursor:pointer}
+.nav-item:hover,.nav-item.active{background:#286342;color:#fff}
+.nav-icon{width:22px;text-align:center}
+.nav-arrow{margin-left:auto;font-size:11px}
+.subnav{display:none;padding-left:34px}.subnav.open{display:block}
+.subnav div{padding:8px 10px;color:#bcd0c3;font-size:12px;cursor:pointer;border-radius:7px}
+.subnav div:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar-bottom{padding:13px;border-top:1px solid rgba(255,255,255,.1)}
+.user-mini{display:flex;align-items:center;gap:9px;padding:9px}
+.avatar{width:35px;height:35px;border-radius:50%;background:var(--gold);color:var(--green);display:grid;place-items:center;font-weight:900;font-size:12px}
+.user-mini small{color:#abc1b1;display:block;font-size:10px}
+.logout{width:100%;border:0;background:rgba(255,255,255,.08);color:#fff;padding:9px;border-radius:8px;font-size:12px;margin-top:7px}
+
+/* MAIN */
+.main{margin-left:255px;min-height:100vh}
+.topbar{height:78px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.page-title h2{color:var(--green);font-size:22px}.page-title p{font-size:11px;color:var(--muted);margin-top:3px}
+.top-actions{display:flex;align-items:center;gap:12px}
+.icon-btn{width:36px;height:36px;border:1px solid var(--border);border-radius:9px;background:#fff}
+.profile{display:flex;align-items:center;gap:9px;border-left:1px solid var(--border);padding-left:15px}
+.profile b{font-size:12px}.profile small{font-size:10px;color:var(--muted);display:block}
+.content{padding:25px 28px 40px}
+.page{display:none}.page.active{display:block}
+
+/* DASHBOARD */
+.welcome{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.welcome h1{font-size:25px;color:var(--green)}.welcome p{font-size:12px;color:var(--muted)}
+.date-chip{background:var(--cream);border:1px solid #eadfbe;padding:10px 14px;border-radius:9px;font-size:12px;color:var(--green);font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat{background:#fff;border:1px solid var(--border);border-radius:15px;padding:18px;position:relative;overflow:hidden}
+.stat:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;background:var(--cream);right:-25px;top:-25px}
+.stat-head{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;font-weight:800}.stat-icon{width:35px;height:35px;border-radius:9px;background:var(--green);color:#fff;display:grid;place-items:center}
+.stat:nth-child(2) .stat-icon,.stat:nth-child(4) .stat-icon{background:var(--gold);color:var(--green)}
+.stat:nth-child(3) .stat-icon{background:#e7efe9;color:var(--green)}
+.stat h3{font-size:25px;color:var(--green);margin-top:13px}.stat-foot{font-size:10px;color:var(--muted);margin-top:5px}.up{color:#3d8757;font-weight:800}.down{color:var(--red);font-weight:800}
+.grid2{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;margin-top:18px}
+.card{background:#fff;border:1px solid var(--border);border-radius:15px;padding:19px}
+.card-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-title h3{color:var(--green);font-size:15px}.card-title span{font-size:10px;color:var(--muted)}
+.chart{height:245px;display:flex;align-items:flex-end;gap:12px;padding:15px 5px 0;border-bottom:1px solid var(--border);position:relative}
+.chart:before{content:"";position:absolute;left:0;right:0;top:35px;border-top:1px dashed #e2e7e2;box-shadow:0 55px 0 #e2e7e2,0 110px 0 #e2e7e2,0 165px 0 #e2e7e2}
+.bar-group{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px;position:relative;z-index:1}
+.bar{width:17px;border-radius:5px 5px 0 0;background:var(--green)}.bar.gold{background:var(--gold)}
+.month{font-size:9px;color:var(--muted);position:absolute;bottom:-19px}
+.legend{display:flex;gap:15px;font-size:10px;color:var(--muted);margin-top:28px}.legend i{width:8px;height:8px;display:inline-block;border-radius:2px;margin-right:4px;background:var(--green)}.legend i.gold{background:var(--gold)}
+.stock-list{display:grid;gap:12px}
+.stock-row{display:grid;grid-template-columns:1fr 90px 65px;align-items:center;gap:10px;font-size:11px}
+.stock-name b{display:block;color:var(--green);font-size:12px}.stock-name small{color:var(--muted)}
+.stock-progress{height:7px;background:#edf0ed;border-radius:5px;overflow:hidden}.stock-progress span{display:block;height:100%;background:var(--green);border-radius:5px}.stock-progress.low span{background:var(--red)}.stock-status{font-size:9px;font-weight:900;text-align:right}.good{color:#398152}.lowtext{color:var(--red)}
+.bottom-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-top:18px}
+
+/* TABLES */
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th{text-align:left;background:#f5f7f3;color:#6a756d;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:11px}
+td{padding:12px 11px;border-bottom:1px solid #edf0ed;font-size:11px}
+td b{color:var(--green)}
+.status{display:inline-block;padding:4px 8px;border-radius:12px;font-size:9px;font-weight:900}.status.green{background:#e4f2e8;color:#317449}.status.yellow{background:#fff1cc;color:#946e1b}.status.red{background:#fae5e5;color:#a53d3d}.status.blue{background:#e4eef5;color:#446b88}
+.amount{font-weight:900;color:var(--green)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.toolbar h2{color:var(--green);font-size:20px}.filters{display:flex;gap:8px;flex-wrap:wrap}.search{height:38px;border:1px solid var(--border);background:#fff;border-radius:8px;padding:0 11px;font-size:11px;min-width:190px}.select{height:38px;border:1px solid var(--border);background:#fff;border-radius:8px;padding:0 10px;font-size:11px}
+.btn{height:38px;border:0;border-radius:8px;padding:0 15px;font-size:11px;font-weight:800}.btn-green{background:var(--green);color:#fff}.btn-gold{background:var(--gold);color:var(--green)}.btn-light{background:#fff;border:1px solid var(--border);color:var(--green)}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.form-card{background:#fff;border:1px solid var(--border);border-radius:15px;padding:20px}.form-card h3{color:var(--green);font-size:14px;margin-bottom:16px;grid-column:1/-1}.full{grid-column:1/-1}
+.action{border:0;background:none;color:var(--green);font-weight:800;font-size:11px;margin-right:8px}.action.delete{color:var(--red)}
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.kpi{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px}.kpi small{color:var(--muted);font-size:10px}.kpi h3{font-size:24px;color:var(--green);margin:8px 0}.kpi p{font-size:10px;color:var(--muted)}
+.report-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.report-card{background:#fff;border:1px solid var(--border);border-radius:15px;padding:20px}.report-card h3{color:var(--green);font-size:15px;margin-bottom:8px}.report-card p{font-size:11px;color:var(--muted);margin-bottom:15px}
+.empty{padding:40px;text-align:center;color:var(--muted);font-size:12px}
+
+
+/* BILLING / POS */
+.billing-layout{display:grid;grid-template-columns:1.55fr .75fr;gap:18px}
+.billing-left,.billing-right{background:#fff;border:1px solid var(--border);border-radius:15px;padding:20px}
+.billing-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.billing-head h3{color:var(--green);font-size:16px}
+.invoice-chip{background:var(--cream);border:1px solid #eadfbe;color:var(--green);padding:8px 11px;border-radius:8px;font-size:11px;font-weight:800}
+.billing-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.billing-field label{display:block;color:var(--green);font-size:10px;font-weight:800;margin-bottom:6px}
+.billing-field input,.billing-field select{width:100%;height:40px;border:1px solid var(--border);border-radius:8px;padding:0 10px;outline:none;font-size:11px;background:#fff}
+.billing-field input:focus,.billing-field select:focus{border-color:var(--gold)}
+.add-item-box{background:#f7f9f6;border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:15px}
+.add-item-grid{display:grid;grid-template-columns:2fr 1fr .75fr .8fr auto;gap:8px;align-items:end}
+.add-item-grid label{display:block;color:var(--green);font-size:9px;font-weight:800;margin-bottom:5px}
+.add-item-grid select,.add-item-grid input{width:100%;height:38px;border:1px solid var(--border);border-radius:7px;background:#fff;padding:0 8px;font-size:10px}
+.add-item-btn{height:38px;background:var(--green);color:#fff;border:0;border-radius:7px;padding:0 14px;font-size:11px;font-weight:800}
+.bill-table{min-width:650px}
+.bill-table th{background:var(--green);color:#fff}
+.bill-table td{vertical-align:middle}
+.qty-input{width:55px;height:29px;border:1px solid var(--border);border-radius:6px;padding:0 5px;text-align:center;font-size:11px}
+.remove-item{border:0;background:#fae5e5;color:#a53d3d;width:27px;height:27px;border-radius:6px;font-weight:900}
+.billing-right h3{color:var(--green);font-size:16px;margin-bottom:18px}
+.customer-summary{background:var(--cream);border-radius:10px;padding:13px;margin-bottom:18px;font-size:11px}
+.customer-summary b{color:var(--green);font-size:13px}
+.summary-row{display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-size:12px}
+.summary-row.total{border-top:2px solid var(--border);margin-top:7px;padding-top:14px;color:var(--green);font-size:20px;font-weight:900}
+.summary-row.discount{color:#3d8757}
+.payment-box{border-top:1px solid var(--border);padding-top:15px;margin-top:12px}
+.payment-box label{display:block;color:var(--green);font-size:10px;font-weight:800;margin-bottom:6px}
+.payment-box select,.payment-box input{width:100%;height:40px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font-size:11px;margin-bottom:11px}
+.payment-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.payment-buttons button{height:42px;border-radius:8px;font-size:11px;font-weight:800;border:0}
+.print-btn{background:var(--gold);color:var(--green)}
+.save-btn{background:var(--green);color:#fff}
+.bill-note{font-size:9px;color:var(--muted);text-align:center;margin-top:13px;line-height:1.5}
+.billing-actions{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:15px;border-top:1px solid var(--border)}
+.billing-actions button{height:39px;border-radius:8px;padding:0 16px;font-size:11px;font-weight:800;border:0}
+.hold-btn{background:#f1f3f1;color:var(--green)}
+.clear-btn{background:#fae5e5;color:#a53d3d}
+.invoice-preview{display:none}
+@media(max-width:1000px){
+ .billing-layout{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+ .billing-fields{grid-template-columns:1fr}
+ .add-item-grid{grid-template-columns:1fr 1fr}
+ .add-item-grid .product-field{grid-column:1/-1}
+ .add-item-btn{width:100%}
+}
+
+/* BILLING DESKTOP FIT-TO-SCREEN */
+@media(min-width:1001px){
+  .content:has(.page#billing.active){padding:16px 28px 18px}
+  .page#billing.active .toolbar{margin-bottom:10px}
+  .page#billing.active .billing-layout{
+    height:calc(100vh - 155px);
+    min-height:570px;
+    align-items:stretch;
+  }
+  .page#billing.active .billing-left,
+  .page#billing.active .billing-right{
+    height:100%;
+    padding:16px;
+    overflow:hidden;
+  }
+  .page#billing.active .billing-head{margin-bottom:12px}
+  .page#billing.active .billing-fields{gap:9px;margin-bottom:11px}
+  .page#billing.active .billing-field input,
+  .page#billing.active .billing-field select{height:36px}
+  .page#billing.active .add-item-box{padding:10px;margin-bottom:10px}
+  .page#billing.active .add-item-grid select,
+  .page#billing.active .add-item-grid input,
+  .page#billing.active .add-item-btn{height:34px}
+  .page#billing.active .table-wrap{flex:1;min-height:0;overflow:auto}
+  .page#billing.active .bill-table td{padding:8px 9px}
+  .page#billing.active .bill-table th{padding:9px}
+  .page#billing.active .billing-actions{margin-top:9px;padding-top:9px}
+  .page#billing.active .billing-right h3{margin-bottom:12px}
+  .page#billing.active .customer-summary{padding:10px;margin-bottom:10px}
+  .page#billing.active .summary-row{padding:6px 0}
+  .page#billing.active .summary-row.total{font-size:17px;padding-top:10px}
+  .page#billing.active .payment-box{padding-top:10px;margin-top:8px}
+  .page#billing.active .payment-box select,
+  .page#billing.active .payment-box input{height:36px;margin-bottom:7px}
+  .page#billing.active .payment-buttons button{height:37px}
+  .page#billing.active .bill-note{margin-top:8px}
+  .page#billing.active .summary-row.total span{white-space:nowrap}
+}
+
+/* MOBILE */
+.mobile-menu{display:none}
+@media(max-width:1000px){
+ .sidebar{width:220px}.main{margin-left:220px}.stats{grid-template-columns:1fr 1fr}.grid2,.bottom-grid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+ .login-left{display:none}.login-right{width:100%}
+ .sidebar{left:-255px;transition:.25s}.sidebar.open{left:0}.main{margin-left:0}
+ .mobile-menu{display:block;border:0;background:none;font-size:22px;color:var(--green);margin-right:10px}
+ .topbar{padding:0 15px}.content{padding:18px 15px}.profile{display:none}
+ .stats{grid-template-columns:1fr 1fr}.form-grid,.kpi-grid,.report-grid{grid-template-columns:1fr}
+ .welcome{align-items:flex-start;gap:10px;flex-direction:column}
+}
+@media(max-width:480px){.stats{grid-template-columns:1fr}.login-box{padding:27px}}
+
+/* COMPANY PROFILE / ROLE ACCESS / MASTER EDIT */
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.form-field{display:flex;flex-direction:column;gap:7px}
+.form-field label{font-size:11px;font-weight:800;letter-spacing:.5px;color:#174A2E}
+.form-field input,.form-field select,.form-field textarea{border:1px solid #DDE4DE;border-radius:10px;padding:11px 12px;font:inherit;background:#fff;color:#24352B;box-sizing:border-box}
+.form-field textarea{min-height:80px;resize:vertical}
+.form-field.full{grid-column:1/-1}
+.company-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.permission-table th,.permission-table td{padding:10px 9px;text-align:center}
+.permission-table th:first-child,.permission-table td:first-child{text-align:left}
+.permission-table input[type="checkbox"]{width:17px;height:17px;accent-color:#174A2E}
+.permission-note{font-size:12px;color:#68766D;margin-top:8px}
+.edit-btn{background:#FFF8E7;border:1px solid #D9A441;color:#174A2E;border-radius:7px;padding:6px 10px;font-weight:700;cursor:pointer}
+.edit-btn:hover{background:#D9A441;color:#fff}
+.master-actions{white-space:nowrap}
+@media(max-width:900px){.form-grid{grid-template-columns:1fr}}
+
+
+/* HIDE SIDEBAR SCROLLBAR */
+.sidebar,
+.sidebar .nav,
+.sidebar nav {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.sidebar::-webkit-scrollbar,
+.sidebar .nav::-webkit-scrollbar,
+.sidebar nav::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+
+/* Header profile dropdown; logout is available only from the top-right profile */
+.profile-wrap{position:relative;display:flex;align-items:center}
+.profile-wrap .profile{display:flex;align-items:center;gap:9px;border:0;border-left:1px solid var(--border);padding:8px 0 8px 15px;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.profile-chevron{font-size:12px;color:#738077;margin-left:4px}
+.profile-menu{position:absolute;right:0;top:calc(100% + 10px);width:190px;background:#fff;border:1px solid #e2e8df;border-radius:11px;box-shadow:0 12px 32px rgba(24,55,37,.15);padding:8px;z-index:1000}
+.profile-menu[hidden]{display:none!important}
+.profile-menu-user{padding:9px 10px 11px;border-bottom:1px solid #edf0e8;margin-bottom:5px}
+.profile-menu-user b,.profile-menu-user small{display:block}
+.profile-menu-user b{font-size:12px;color:#254f35}
+.profile-menu-user small{font-size:10px;color:#829084;margin-top:3px}
+.profile-menu button{display:block;width:100%;border:0;border-radius:7px;background:#fff;text-align:left;padding:10px;color:#405d49;cursor:pointer;font:inherit;font-size:12px}
+.profile-menu button:hover{background:#f1f5eb;color:#254f35}
+@media(max-width:760px){.profile-wrap .profile{display:flex}.profile-label{display:none}.profile-wrap .profile{border-left:0;padding-left:5px}}
+
+/* ===== HARITHAM UI REFRESH ===== */
+:root{
+  --green:#1F4D36;--green2:#153A29;--green3:#2F6B49;
+  --cream:#F8F6E9;--gold:#D9C84A;--gold2:#F0E9A0;
+  --white:#FFFFFF;--bg:#F3F5EF;--text:#24362C;--muted:#738077;
+  --border:#E2E8DF;--red:#C64F4F;--orange:#C9852B;--blue:#4D7898;
+}
+body{font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);letter-spacing:.05px}
+button,input,select,textarea{font-family:inherit}
+.login-page{background:linear-gradient(135deg,#f8f7eb 0%,#eef3e8 100%);gap:0}
+.login-left{width:54%;padding:64px 7%;background:radial-gradient(circle at 85% 15%,rgba(217,200,74,.18),transparent 30%),linear-gradient(145deg,#163b2a,#2a6242 78%,#214a34);position:relative}
+.login-left:before{width:700px;height:700px;right:-370px;top:-180px;border:1px solid rgba(255,255,255,.10)}
+.login-left:after{width:520px;height:520px;right:-210px;bottom:-280px;border:1px solid rgba(240,233,160,.18)}
+.login-brand{max-width:550px}
+.login-emblem{display:grid;place-items:center;width:70px;height:70px;border-radius:22px;background:var(--gold);font-size:37px;box-shadow:0 12px 28px rgba(0,0,0,.13);margin-bottom:30px}
+.login-eyebrow{font-size:10px;letter-spacing:3px;font-weight:900;color:#e9df7a;margin-bottom:13px}
+.login-brand h1{font-size:clamp(38px,4vw,58px);line-height:1.05;letter-spacing:-1.5px;margin-bottom:18px}
+.login-brand h1 span{color:#e8dc62}
+.login-brand p{font-size:15px;line-height:1.85;color:#e0ebe2;max-width:455px}
+.login-points{margin-top:34px;gap:15px}
+.login-points div{font-size:13px;color:#f0f5ef}
+.login-points b{width:25px;height:25px;background:#e7dc61;color:#1f4d36;font-size:12px}
+.login-tagline{margin-top:42px;padding-top:18px;border-top:1px solid rgba(255,255,255,.16);font-size:9px;letter-spacing:2.5px;color:#bdcfbf;font-weight:800}
+.login-right{width:46%;padding:35px}
+.login-box{width:min(430px,100%);padding:42px;background:rgba(255,255,255,.94);border:1px solid #e3e8dd;border-radius:26px;box-shadow:0 24px 70px rgba(31,77,54,.10)}
+.login-box .mini{color:#71804e;letter-spacing:2.5px;font-size:10px}
+.login-box h2{font-size:32px;letter-spacing:-.7px;color:var(--green);margin:10px 0}
+.login-box>p{font-size:13px;line-height:1.7;color:var(--muted);margin-bottom:30px}
+.form-group label{font-size:10px;letter-spacing:.8px;color:#405d49}
+.form-control{height:48px;border-radius:11px;border-color:#dfe6dc;padding:0 15px}
+.form-control:focus{border-color:#91a66d;box-shadow:0 0 0 3px rgba(145,166,109,.13)}
+.login-btn{height:49px;border-radius:11px;background:var(--green);box-shadow:0 7px 16px rgba(31,77,54,.15);transition:transform .2s,background .2s}
+.login-btn:hover{background:var(--green2);transform:translateY(-1px)}
+.demo{background:#f5f5e9;border:1px solid #ecebd5;color:#7b8175;border-radius:10px;padding:13px;font-size:11px}
+.app{background:var(--bg)}
+.sidebar{width:258px;background:linear-gradient(180deg,#1c4933 0%,#163b2a 100%);box-shadow:8px 0 28px rgba(24,55,37,.06)}
+.brand{height:82px;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.11)}
+.brand-logo{width:48px;height:42px;object-fit:cover;border-radius:10px;border:2px solid rgba(255,255,255,.3)}
+.brand-name{font-size:19px;letter-spacing:-.4px}
+.brand-name small{font-size:8px;letter-spacing:2.1px;color:#d6e1b5}
+.nav{padding:14px 11px}
+.nav-section{color:#a9c6a8;font-size:9px;letter-spacing:1.8px;padding:17px 12px 8px}
+.nav-item{border-radius:10px;padding:11px 12px;font-size:12px;color:#e0e9df;transition:background .18s,color .18s}
+.nav-item:hover,.nav-item.active{background:rgba(240,233,160,.15);color:#fff}
+.nav-item.active{box-shadow:inset 3px 0 #e1d45d}
+.subnav{padding-left:31px}
+.subnav div{padding:9px 10px;font-size:11px;border-radius:8px}
+.sidebar-bottom{background:rgba(0,0,0,.08);border-top-color:rgba(255,255,255,.1);padding:14px}
+.avatar{background:#e5d95c;color:#204b34}
+.logout{border:1px solid rgba(255,255,255,.08);border-radius:9px}
+.main{margin-left:258px}
+.topbar{height:76px;padding:0 30px;background:rgba(255,255,255,.96);border-bottom:1px solid #e5e9e1;box-shadow:0 3px 14px rgba(29,55,36,.025)}
+.page-title h2{font-size:21px;letter-spacing:-.4px}
+.page-title p{font-size:11px;color:#829084}
+.icon-btn{border-radius:11px;background:#f8f9f5;border-color:#e7ebe4}
+.profile{border-left-color:#e7ebe4}
+.content{padding:26px 30px 38px}
+.welcome h1{font-size:27px;letter-spacing:-.7px}
+.welcome p{font-size:12px;margin-top:5px}
+.date-chip{border:1px solid #e9e4bd;background:#fffde9;border-radius:11px;padding:11px 15px}
+.stats{gap:17px}
+.stat,.card,.form-card,.kpi,.report-card,.billing-left,.billing-right{border:1px solid #e5e9e1;border-radius:17px;box-shadow:0 5px 18px rgba(29,55,36,.035)}
+.stat{padding:20px;transition:transform .18s,box-shadow .18s}
+.stat:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(29,55,36,.07)}
+.stat:after{background:#f6f4d9}
+.stat-head{font-size:10px;letter-spacing:.45px}
+.stat-icon{border-radius:11px;background:var(--green)}
+.stat h3{font-size:27px;letter-spacing:-.5px}
+.grid2{gap:19px;margin-top:20px}
+.card{padding:21px}
+.card-title h3{font-size:15px;letter-spacing:-.2px}
+.card-title span{font-size:10px}
+.chart{height:230px}
+.stock-row{font-size:11px}
+.stock-progress{height:8px;background:#edf0e8}
+.table-wrap{border-radius:10px}
+table{border-spacing:0}
+th{background:#f3f5ef;color:#657568;font-size:9px;letter-spacing:.8px;padding:12px}
+td{padding:13px 11px;border-bottom:1px solid #edf0e9;font-size:11px}
+tbody tr:hover{background:#fbfcf8}
+.status{padding:5px 9px;letter-spacing:.3px}
+.toolbar h2{font-size:21px;letter-spacing:-.4px}
+.search,.select{height:40px;border-radius:10px;border-color:#e0e6dc}
+.search:focus,.select:focus{outline:0;border-color:#91a66d;box-shadow:0 0 0 3px rgba(145,166,109,.12)}
+.btn{height:40px;border-radius:10px;transition:transform .15s,filter .15s}
+.btn:hover{filter:brightness(.97);transform:translateY(-1px)}
+.btn-green{background:var(--green)}
+.btn-gold{background:#e5d75c}
+.btn-light{border-color:#dfe6dc;background:#fff}
+.form-card,.kpi,.report-card{padding:21px}
+.form-field label{font-size:10px;letter-spacing:.7px}
+.form-field input,.form-field select,.form-field textarea{border-radius:10px;border-color:#dfe6dc;padding:12px}
+.edit-btn{background:#fffde8;border-color:#e7d96a;border-radius:8px}
+.edit-btn:hover{background:#e5d75c;color:#204b34}
+.billing-left,.billing-right{padding:20px}
+.invoice-chip{border-radius:10px;background:#fffde8;border-color:#e8e2ad}
+.add-item-box{background:#f7f8f2;border-color:#e4e9df;border-radius:12px}
+.add-item-grid select,.add-item-grid input{border-color:#dfe6dc;border-radius:8px}
+.add-item-btn{border-radius:8px;background:var(--green)}
+.bill-table th{background:#244f37;color:#fff}
+.qty-input{border-radius:7px}
+.customer-summary{background:#fbf8df;border:1px solid #efebc7;border-radius:12px}
+.summary-row.total{border-top-color:#e7ebe4}
+.payment-box{border-top-color:#e5e9e1}
+.payment-buttons button{border-radius:10px!important}
+.print-btn{background:#e5d75c}
+.save-btn{background:var(--green)}
+.hold-btn,.clear-btn{border-radius:9px!important}
+@media(max-width:1000px){
+ .sidebar{width:230px}.main{margin-left:230px}
+ .login-left{padding:50px 6%}
+ .login-box{padding:32px}
+}
+@media(max-width:760px){
+ .login-left{display:none}.login-right{width:100%;padding:22px}
+ .sidebar{left:-258px;width:258px}.sidebar.open{left:0}.main{margin-left:0}
+ .topbar{padding:0 15px}.content{padding:18px 15px}
+ .login-box{padding:30px}
+}
+@media(max-width:480px){
+ .login-box{padding:25px;border-radius:20px}
+ .stats{grid-template-columns:1fr}
+}
+
+
+/* COMPLETE TEMPLATE INTERACTIONS */
+.modal-backdrop{position:fixed;inset:0;background:rgba(13,32,21,.52);z-index:999;display:none;align-items:center;justify-content:center;padding:18px}
+.modal-backdrop.open{display:flex}
+.modal-panel{width:min(680px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.22);padding:24px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}
+.modal-head h3{color:var(--green);font-size:19px}
+.modal-close{width:34px;height:34px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--text);font-size:20px}
+.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.modal-field{display:flex;flex-direction:column;gap:6px}
+.modal-field.full{grid-column:1/-1}
+.modal-field label{font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--green)}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;border:1px solid var(--border);border-radius:9px;padding:11px;font:inherit;font-size:12px;background:#fff;color:var(--text)}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.toast{position:fixed;right:22px;bottom:22px;z-index:1200;background:#204c35;color:#fff;padding:13px 18px;border-radius:11px;box-shadow:0 10px 30px #0002;font-size:12px;display:none;max-width:min(420px,calc(100vw - 30px))}
+.toast.show{display:block}
+.row-edit{border:1px solid #e6e8df;background:#fff;border-radius:7px;padding:5px 8px;color:var(--green);font-weight:700;font-size:10px}
+.row-delete{border:1px solid #f0d5d5;background:#fff7f7;border-radius:7px;padding:5px 8px;color:#b43b3b;font-weight:700;font-size:10px}
+@media(max-width:600px){.modal-grid{grid-template-columns:1fr}.modal-field.full{grid-column:auto}.modal-panel{padding:18px}}
+
+
+/* LOGIN / APP VISIBILITY FIX */
+#loginPage{position:fixed;inset:0;width:100%;height:100vh;min-height:100vh;z-index:99999;overflow:auto}
+#loginPage[hidden], #app[hidden]{display:none!important}
+#app{min-height:100vh;width:100%;display:block}
+/* ===== HARITHAM V2 — DISTINCT UI REDESIGN ===== */
+:root{
+ --green:#254f35;--green2:#183d29;--green3:#3f7549;
+ --cream:#f6f5e9;--gold:#d6c94d;--gold2:#eee7a2;
+ --white:#fff;--bg:#f1f3ed;--text:#24362b;--muted:#758176;
+ --border:#e1e6dc;--red:#bd4b47;--orange:#c8862b;--blue:#4d7898;
+}
+body{font-family:"Segoe UI",Inter,Arial,sans-serif;background:#f1f3ed;color:#26382c}
+.login-page{background:#f4f5ed!important;display:grid!important;grid-template-columns:minmax(0,1.1fr) minmax(420px,.9fr)!important;gap:0!important}
+.login-left{width:auto!important;min-height:100vh;background:#e6edda!important;color:#264b32!important;padding:8vw!important;align-items:center!important}
+.login-left:before,.login-left:after{border-color:rgba(37,79,53,.12)!important}
+.login-emblem{width:78px!important;height:78px!important;border-radius:24px!important;background:#d6c94d!important;box-shadow:none!important}
+.login-eyebrow{color:#6c7e42!important}
+.login-brand h1{font-size:clamp(42px,5vw,68px)!important;color:#234b32!important;letter-spacing:-2px!important}
+.login-brand h1 span{color:#81943d!important}
+.login-brand p{color:#5c6d5d!important;font-size:16px!important}
+.login-points div{color:#34523a!important}
+.login-points b{background:#254f35!important;color:#fff!important}
+.login-tagline{border-color:#cbd6c4!important;color:#617560!important}
+.login-right{width:auto!important;padding:5vw!important;background:#f9faf6!important}
+.login-box{width:min(430px,100%)!important;padding:42px!important;border:1px solid #e3e8df!important;border-radius:8px!important;box-shadow:0 20px 60px rgba(34,66,42,.06)!important}
+.login-box h2{font-size:34px!important}
+.login-btn{border-radius:7px!important}
+.demo{border-radius:7px!important}
+.app{background:#f1f3ed!important}
+.sidebar{width:248px!important;background:#fff!important;color:#304435!important;border-right:1px solid #e0e6dc!important;box-shadow:none!important}
+.brand{height:88px!important;border-bottom:1px solid #edf0e8!important}
+.brand-name{color:#254f35!important;font-size:20px!important}
+.brand-name small{color:#7c8b6d!important}
+.brand-logo{border:1px solid #e6e9dc!important}
+.nav{padding:16px 13px!important}
+.nav-section{color:#9aa48f!important;font-size:9px!important}
+.nav-item{color:#5b6b5b!important;border-radius:7px!important;padding:12px!important;font-size:12px!important}
+.nav-item:hover,.nav-item.active{background:#edf2e5!important;color:#254f35!important}
+.nav-item.active{box-shadow:inset 3px 0 #9aab4c!important;font-weight:800!important}
+.subnav div{color:#778273!important}
+.subnav div:hover{background:#f2f5ed!important;color:#254f35!important}
+.sidebar-bottom{background:#fff!important;border-top:1px solid #e7ebe3!important}
+.user-mini small{color:#899487!important}
+.logout{background:#f3f5ef!important;color:#4d624f!important;border:1px solid #e5e9e0!important}
+.main{margin-left:248px!important}
+.topbar{height:84px!important;padding:0 34px!important;background:#fff!important;border-bottom:1px solid #e1e6dc!important;box-shadow:none!important}
+.page-title h2{font-size:23px!important;font-weight:750!important;color:#254f35!important}
+.page-title p{color:#8a9587!important}
+.icon-btn{background:#f7f8f3!important;border:1px solid #e7ebe2!important}
+.content{padding:30px 34px 42px!important}
+.welcome{background:#254f35!important;color:#fff!important;border-radius:13px!important;padding:26px 30px!important;margin-bottom:22px!important;min-height:130px!important}
+.welcome h1{color:#fff!important;font-size:28px!important}
+.welcome p{color:#dbe6d7!important;margin-top:7px!important}
+.date-chip{background:#fffde8!important;border:0!important;border-radius:7px!important}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+.stat{border:1px solid #e4e8de!important;border-radius:11px!important;padding:19px!important;box-shadow:none!important;background:#fff!important}
+.stat:after{display:none!important}
+.stat-head{color:#7a8678!important;font-size:10px!important}
+.stat-icon{border-radius:8px!important;background:#e9efdf!important;color:#254f35!important}
+.stat:nth-child(2) .stat-icon,.stat:nth-child(4) .stat-icon{background:#f2edb9!important;color:#4b572d!important}
+.stat:nth-child(3) .stat-icon{background:#e1eee3!important}
+.stat h3{font-size:27px!important;margin-top:16px!important}
+.grid2{grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr)!important;gap:16px!important;margin-top:17px!important}
+.bottom-grid{gap:16px!important;margin-top:17px!important}
+.card,.form-card,.kpi,.report-card,.billing-left,.billing-right{border:1px solid #e2e7dd!important;border-radius:11px!important;box-shadow:none!important;background:#fff!important}
+.card{padding:22px!important}
+.card-title{padding-bottom:13px!important;border-bottom:1px solid #eef0e9!important;margin-bottom:17px!important}
+.card-title h3{font-size:14px!important;font-weight:750!important}
+.chart{border-bottom-color:#e7ebe3!important}
+.stock-progress{background:#edf0e8!important}
+.toolbar{margin-bottom:20px!important}
+.toolbar h2{font-size:22px!important}
+.search,.select{border-radius:7px!important;background:#fff!important}
+.btn{border-radius:7px!important;font-weight:750!important}
+.btn-green{background:#254f35!important}
+.btn-gold{background:#d6c94d!important}
+.btn-light{border-color:#dfe5d9!important}
+table{border-collapse:separate!important;border-spacing:0!important}
+th{background:#f3f5ef!important;color:#687668!important;padding:13px!important;font-size:9px!important}
+td{padding:13px!important}
+tbody tr:hover{background:#f8faf4!important}
+.bill-table th{background:#254f35!important;color:#fff!important}
+.status{border-radius:5px!important}
+.form-field input,.form-field select,.form-field textarea{border-radius:7px!important}
+.edit-btn{border-radius:6px!important}
+.billing-layout{grid-template-columns:minmax(0,1.6fr) minmax(290px,.72fr)!important;gap:15px!important}
+.billing-left,.billing-right{padding:19px!important}
+.invoice-chip{border-radius:7px!important}
+.add-item-box{border-radius:8px!important;background:#f6f7f1!important}
+.customer-summary{border-radius:8px!important}
+.payment-buttons button{border-radius:7px!important}
+@media(max-width:1100px){
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .billing-layout,.grid2,.bottom-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:760px){
+ .login-page{display:flex!important}
+ .login-left{display:none!important}
+ .login-right{width:100%!important;padding:22px!important}
+ .sidebar{width:258px!important;left:-258px!important}
+ .sidebar.open{left:0!important}
+ .main{margin-left:0!important}
+ .topbar{padding:0 15px!important}
+ .content{padding:17px 14px 28px!important}
+ .welcome{padding:20px!important}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:450px){.stats{grid-template-columns:1fr!important}.login-box{padding:26px!important}}
+
+
+/* Sidebar footer removed: profile and logout are available only in the top-right header. */
+.sidebar-bottom, .sidebar .logout { display: none !important; }
+
+/* Sales Billing / POS: cleaner spacing and single-row customer details */
+@media (min-width: 1101px) {
+  .page#billing.active .billing-layout {
+    grid-template-columns: minmax(0, 1.72fr) minmax(285px, .68fr) !important;
+    gap: 18px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-items: start !important;
+  }
+  .page#billing.active .billing-left,
+  .page#billing.active .billing-right {
+    height: auto !important;
+    min-width: 0;
+    padding: 22px !important;
+    overflow: visible !important;
+  }
+  .page#billing.active .billing-fields {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+    align-items: end;
+  }
+  .page#billing.active .billing-field { min-width: 0; }
+  .page#billing.active .billing-field input,
+  .page#billing.active .billing-field select {
+    box-sizing: border-box;
+    min-width: 0;
+    height: 42px !important;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+  .page#billing.active .billing-head { margin-bottom: 22px !important; }
+  .page#billing.active .billing-head h3 { font-size: 18px !important; }
+  .page#billing.active .add-item-box { padding: 14px !important; margin-bottom: 18px !important; }
+  .page#billing.active .add-item-grid { gap: 10px !important; }
+  .page#billing.active .add-item-grid select,
+  .page#billing.active .add-item-grid input,
+  .page#billing.active .add-item-btn { height: 40px !important; font-size: 11px; }
+  .page#billing.active .table-wrap { overflow-x: auto !important; }
+  .page#billing.active .billing-right h3 { margin-bottom: 14px !important; }
+  .page#billing.active .customer-summary { padding: 14px !important; margin-bottom: 18px !important; }
+  .page#billing.active .summary-row { padding: 9px 0 !important; }
+}
+@media (min-width: 761px) and (max-width: 1100px) {
+  .page#billing.active .billing-fields { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 760px) {
+  .page#billing.active .billing-fields { grid-template-columns: 1fr !important; }
+  .page#billing.active .billing-left,
+  .page#billing.active .billing-right { padding: 15px !important; }
+}
+</style>
+
+<style id="billing-viewport-fit-final">
+/* Final POS viewport fit: keep payment actions visible at 100% zoom on common desktop screens. */
+@media screen and (min-width: 1200px) and (min-height: 700px) {
+  .page#billing.active .billing-layout {
+    grid-template-columns: minmax(0, 1.72fr) minmax(300px, .72fr) !important;
+    gap: 12px !important;
+    align-items: start !important;
+  }
+  .page#billing.active .billing-left,
+  .page#billing.active .billing-right { padding: 12px !important; }
+  .page#billing.active .billing-head { margin-bottom: 9px !important; }
+  .page#billing.active .billing-head h3,
+  .page#billing.active .billing-right > h3 { font-size: 15px !important; margin-bottom: 5px !important; line-height: 1.15 !important; }
+  .page#billing.active .billing-fields { margin-bottom: 9px !important; gap: 8px !important; }
+  .page#billing.active .billing-field input,
+  .page#billing.active .billing-field select { height: 32px !important; }
+  .page#billing.active .add-item-box { padding: 8px !important; margin-bottom: 8px !important; }
+  .page#billing.active .add-item-grid select,
+  .page#billing.active .add-item-grid input,
+  .page#billing.active .add-item-btn { height: 32px !important; }
+  .page#billing.active .table-wrap { max-height: 76px !important; overflow: auto !important; }
+  .page#billing.active .bill-table th { padding: 7px 6px !important; }
+  .page#billing.active .bill-table td { padding: 5px 6px !important; }
+  .page#billing.active .billing-actions { margin-top: 7px !important; padding-top: 7px !important; }
+  .page#billing.active .billing-actions button { height: 32px !important; min-height: 32px !important; }
+  .page#billing.active .billing-right .permission-note { margin: 0 !important; line-height: 1.1 !important; font-size: 10px !important; }
+  .page#billing.active .customer-summary { padding: 7px 10px !important; margin: 5px 0 7px !important; line-height: 1.2 !important; }
+  .page#billing.active .customer-summary b { font-size: 12px !important; }
+  .page#billing.active .summary-row { padding: 3px 0 !important; line-height: 1.2 !important; font-size: 11px !important; }
+  .page#billing.active .summary-row.total { margin-top: 4px !important; padding: 6px 0 !important; font-size: 15px !important; }
+  .page#billing.active .summary-row.total span,
+  .page#billing.active .summary-row.total b { font-size: 15px !important; }
+  .page#billing.active .payment-box { margin-top: 6px !important; padding-top: 6px !important; }
+  .page#billing.active .payment-box label { margin-bottom: 3px !important; font-size: 9px !important; }
+  .page#billing.active .payment-box select,
+  .page#billing.active .payment-box input { height: 29px !important; min-height: 29px !important; margin-bottom: 5px !important; padding: 0 8px !important; }
+  .page#billing.active .payment-buttons { margin-top: 4px !important; gap: 6px !important; }
+  .page#billing.active .payment-buttons button { height: 31px !important; min-height: 31px !important; padding: 5px 6px !important; font-size: 10px !important; }
+  .page#billing.active .bill-note { margin-top: 4px !important; font-size: 8px !important; line-height: 1.15 !important; }
+}
+
+/* Final desktop billing fit: all POS actions visible at 100% zoom on a typical 1366x768+ viewport */
+@media screen and (min-width: 1200px) and (min-height: 680px) {
+  html, body { min-height:100%; }
+  body { overflow-x:hidden; }
+  .main, .main-content, .content { min-height:0 !important; }
+  .page#billing.active { padding:10px 18px 12px !important; }
+  .page#billing.active .toolbar { margin:0 0 10px !important; min-height:36px !important; }
+  .page#billing.active .billing-layout {
+    grid-template-columns:minmax(0,1.72fr) minmax(330px,.72fr) !important;
+    gap:12px !important; align-items:start !important;
+  }
+  .page#billing.active .billing-left { padding:14px !important; }
+  .page#billing.active .billing-right { padding:12px 14px !important; }
+  .page#billing.active .billing-head { margin-bottom:9px !important; }
+  .page#billing.active .billing-fields { gap:8px !important; margin-bottom:9px !important; }
+  .page#billing.active .billing-field label { margin-bottom:3px !important; font-size:10px !important; }
+  .page#billing.active .billing-field input,
+  .page#billing.active .billing-field select { height:34px !important; min-height:34px !important; }
+  .page#billing.active .add-item-box { padding:8px !important; margin-bottom:9px !important; }
+  .page#billing.active .add-item-grid select,
+  .page#billing.active .add-item-grid input,
+  .page#billing.active .add-item-btn { height:34px !important; min-height:34px !important; }
+  .page#billing.active .table-wrap { max-height:72px !important; overflow:auto !important; }
+  .page#billing.active .billing-actions { margin-top:7px !important; padding-top:7px !important; }
+  .page#billing.active .billing-actions button { min-height:34px !important; }
+  .page#billing.active .billing-right h3 { margin-bottom:5px !important; font-size:16px !important; }
+  .page#billing.active .customer-summary { margin:4px 0 6px !important; padding:7px 10px !important; }
+  .page#billing.active .summary-row { padding:4px 0 !important; line-height:1.15 !important; }
+  .page#billing.active .summary-row.total { padding:6px 0 !important; margin-top:3px !important; }
+  .page#billing.active .payment-box { margin-top:5px !important; padding-top:6px !important; }
+  .page#billing.active .payment-box label { margin-bottom:2px !important; }
+  .page#billing.active .payment-box select,
+  .page#billing.active .payment-box input { height:30px !important; min-height:30px !important; margin-bottom:5px !important; }
+  .page#billing.active .payment-buttons { margin-top:4px !important; gap:6px !important; }
+  .page#billing.active .payment-buttons button { height:32px !important; min-height:32px !important; }
+  .page#billing.active .bill-note { margin-top:4px !important; font-size:8px !important; line-height:1.15 !important; }
+}
+
+</style>
+<style>
+
+/* Correctly applied POS compact layout (main application document) */
+@media screen and (min-width: 1200px) and (min-height: 700px) {
+  body:has(#billing.active) { overflow-y: hidden !important; }
+  #billing.active { padding: 12px 18px 8px !important; }
+  #billing.active .toolbar { margin: 0 0 12px !important; min-height: 38px !important; }
+  #billing.active .toolbar h2 { font-size: 22px !important; line-height: 1.15 !important; margin: 0 !important; }
+  #billing.active .toolbar .btn { min-height: 36px !important; padding: 8px 12px !important; }
+  #billing.active .billing-layout { display:grid !important; grid-template-columns:minmax(0,1.7fr) minmax(330px,.72fr) !important; gap:14px !important; align-items:start !important; }
+  #billing.active .billing-left { padding:14px !important; }
+  #billing.active .billing-right { padding:14px !important; }
+  #billing.active .billing-head { margin-bottom:10px !important; }
+  #billing.active .billing-head h3, #billing.active .billing-right > h3 { font-size:17px !important; line-height:1.15 !important; margin:0 0 7px !important; }
+  #billing.active .invoice-chip { padding:7px 10px !important; font-size:11px !important; }
+  #billing.active .billing-fields { grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:9px !important; margin-bottom:10px !important; }
+  #billing.active .billing-field label, #billing.active .add-item-grid label, #billing.active .payment-box label { font-size:10px !important; margin-bottom:4px !important; line-height:1.1 !important; }
+  #billing.active .billing-field input, #billing.active .billing-field select { height:35px !important; min-height:35px !important; padding:0 8px !important; font-size:11px !important; }
+  #billing.active .add-item-box { padding:9px !important; margin-bottom:10px !important; }
+  #billing.active .add-item-grid { gap:8px !important; }
+  #billing.active .add-item-grid select, #billing.active .add-item-grid input, #billing.active .add-item-btn { height:35px !important; min-height:35px !important; padding:0 8px !important; font-size:11px !important; }
+  #billing.active .bill-table th { padding:9px 7px !important; font-size:9px !important; }
+  #billing.active .bill-table td { padding:6px !important; font-size:10px !important; }
+  #billing.active .table-wrap { max-height:76px !important; overflow:auto !important; }
+  #billing.active .billing-actions { margin-top:8px !important; padding-top:8px !important; }
+  #billing.active .billing-actions button { min-height:34px !important; padding:7px 10px !important; font-size:10px !important; }
+  #billing.active .billing-right #billingCompanyGstin { margin:0 0 4px !important; font-size:11px !important; line-height:1.1 !important; }
+  #billing.active .customer-summary { padding:8px 10px !important; margin:5px 0 7px !important; line-height:1.15 !important; font-size:11px !important; }
+  #billing.active .customer-summary b { font-size:12px !important; }
+  #billing.active .summary-row { padding:4px 0 !important; font-size:11px !important; line-height:1.15 !important; }
+  #billing.active .summary-row.total { margin-top:3px !important; padding:7px 0 6px !important; }
+  #billing.active .summary-row.total span, #billing.active .summary-row.total b { font-size:16px !important; }
+  #billing.active .payment-box { margin-top:6px !important; padding-top:7px !important; }
+  #billing.active .payment-box select, #billing.active .payment-box input { height:31px !important; min-height:31px !important; margin-bottom:5px !important; padding:0 8px !important; font-size:11px !important; }
+  #billing.active .payment-buttons { gap:7px !important; margin-top:4px !important; }
+  #billing.active .payment-buttons button { height:32px !important; min-height:32px !important; padding:6px 7px !important; font-size:10px !important; }
+  #billing.active .bill-note { margin-top:4px !important; font-size:8px !important; line-height:1.15 !important; }
+}
+@media screen and (max-width: 1199px) { body:has(#billing.active) { overflow-y:auto !important; } }
+
+</style>
+
+<style id="desktop-100-percent-fit">
+/* Match the compact appearance shown at 80% browser zoom while keeping Chrome at 100%. */
+@media screen and (min-width: 1200px) and (min-height: 700px) {
+  #app { zoom: .8 !important; width: 125% !important; min-height: 125vh !important; }
+  #app .main, #app .content, #app .main-content { min-width: 0; }
+}
+</style>
+
+<style id="billing-page-only-80-percent">
+/* Apply 80% scale only to Sales Billing / POS; browser zoom remains unchanged. */
+@supports (zoom: 0.8) {
+  .page#billing.active { zoom: 0.8 !important; width: 125% !important; }
+}
+@media (max-width: 900px) {
+  .page#billing.active { zoom: 1 !important; width: auto !important; }
+}
+</style>
+
+
+<style id="billing-summary-full-width-fix">
+/* Keep the full invoice summary visible: scale only the billing page without widening it beyond the viewport. */
+@media screen and (min-width: 1200px) {
+  #app { zoom: 1 !important; width: 100% !important; min-height: 100% !important; }
+  .page#billing.active { zoom: .8 !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
+  .page#billing.active .billing-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 30%) !important;
+    gap: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .page#billing.active .billing-left, .page#billing.active .billing-right { min-width: 0 !important; width: auto !important; box-sizing: border-box !important; }
+  .page#billing.active .billing-right { overflow-wrap: anywhere; }
+}
+@media screen and (max-width: 1199px) {
+  .page#billing.active { zoom: 1 !important; width: 100% !important; }
+  .page#billing.active .billing-layout { grid-template-columns: minmax(0, 1fr) minmax(240px, 38%) !important; }
+}
+</style>
+
+
+<style id="billing-summary-buttons-visible-final">
+/* Keep the complete invoice summary and action buttons visible on desktop at 100% browser zoom */
+@media screen and (min-width: 1200px) and (min-height: 700px) {
+  #billing.active .billing-layout { grid-template-columns:minmax(0,1.55fr) minmax(330px,.72fr) !important; gap:14px !important; align-items:start !important; }
+  #billing.active .billing-right { padding:12px !important; }
+  #billing.active .billing-right h3 { font-size:16px !important; line-height:1.1 !important; margin:0 0 5px !important; }
+  #billing.active .billing-right #billingCompanyGstin { font-size:10px !important; line-height:1.1 !important; margin:0 0 4px !important; }
+  #billing.active .billing-right .customer-summary { padding:7px 9px !important; margin:0 0 5px !important; line-height:1.12 !important; }
+  #billing.active .billing-right .customer-summary b { font-size:11px !important; }
+  #billing.active .billing-right .summary-row { padding:3px 0 !important; font-size:10px !important; line-height:1.1 !important; }
+  #billing.active .billing-right .summary-row.total { margin-top:3px !important; padding:6px 0 5px !important; font-size:15px !important; }
+  #billing.active .billing-right .summary-row.total span, #billing.active .billing-right .summary-row.total b { font-size:15px !important; }
+  #billing.active .billing-right .payment-box { margin-top:5px !important; padding-top:5px !important; }
+  #billing.active .billing-right .payment-box label { font-size:9px !important; line-height:1 !important; margin-bottom:2px !important; }
+  #billing.active .billing-right .payment-box select, #billing.active .billing-right .payment-box input { height:29px !important; min-height:29px !important; margin-bottom:4px !important; padding:0 7px !important; font-size:10px !important; }
+  #billing.active .billing-right .payment-buttons { gap:6px !important; margin-top:3px !important; }
+  #billing.active .billing-right .payment-buttons button { height:30px !important; min-height:30px !important; padding:4px 5px !important; font-size:10px !important; }
+  #billing.active .billing-right .bill-note { margin-top:3px !important; font-size:7px !important; line-height:1.1 !important; }
+}
+</style>
+
+<style id="billing-heading-padding-final-fix">
+/* Remove the duplicate page heading inside Billing; keep the main header title. */
+#billing.active > .toolbar > h2 { display: none !important; }
+#billing.active > .toolbar { margin: 0 0 10px !important; min-height: 0 !important; padding: 0 !important; }
+#billing.active { padding-top: 10px !important; }
+#billing.active .billing-layout { margin-top: 0 !important; gap: 12px !important; }
+#billing.active .billing-left, #billing.active .billing-right { padding: 14px !important; }
+#billing.active .billing-head { margin-bottom: 12px !important; }
+#billing.active .billing-fields { margin-bottom: 12px !important; gap: 10px !important; }
+#billing.active .add-item-box { margin-bottom: 12px !important; padding: 10px !important; }
+</style>
+
+
+<style>
+/* Sales / coconut purchase tabs inside the billing screen */
+.billing-mode-tabs{display:flex;gap:8px;margin:0 0 14px;padding:4px;background:#e9eee5;border-radius:10px;width:max-content;max-width:100%}
+.billing-mode-tab{border:1px solid transparent;border-radius:8px;background:transparent;color:#526456;padding:10px 18px;font-size:12px;font-weight:800;cursor:pointer}
+.billing-mode-tab.active{background:#234f36;color:#fff;box-shadow:0 2px 5px #173b271c}
+.billing-mode-panel[hidden]{display:none!important}
+.purchase-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.75fr);gap:14px;align-items:start}
+.purchase-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.purchase-add-grid{display:grid;grid-template-columns:minmax(190px,1.5fr) minmax(100px,.7fr) minmax(120px,.8fr) auto;gap:10px;align-items:end}
+.purchase-add-grid label{display:block;color:var(--green);font-size:10px;font-weight:800;margin-bottom:6px}
+.purchase-add-grid input,.purchase-add-grid select{width:100%;height:38px;border:1px solid var(--border);border-radius:8px;padding:0 10px;background:#fff;font-size:11px}
+.purchase-table-wrap{margin-top:12px;min-height:80px}
+.purchase-charge-field{margin:8px 0}
+.purchase-charge-field label{display:block;color:var(--green);font-size:10px;font-weight:800;margin-bottom:5px}
+.purchase-charge-field input{width:100%;height:34px;border:1px solid var(--border);border-radius:8px;padding:0 9px}
+.purchase-summary-card .customer-summary{margin:12px 0}
+@media(max-width:1050px){.purchase-layout{grid-template-columns:1fr}.purchase-add-grid{grid-template-columns:1fr 1fr}.purchase-add-grid .add-item-btn{min-height:36px}.purchase-summary-card{margin-top:12px}}
+@media(max-width:600px){.billing-mode-tabs{width:100%}.billing-mode-tab{flex:1;padding:10px 6px}.purchase-fields{grid-template-columns:1fr}.purchase-add-grid{grid-template-columns:1fr 1fr}}
+</style>
+
+</head>
+<body>
+
+<!-- LOGIN -->
+<section class="login-page" id="loginPage">
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="login-emblem" aria-hidden="true">🥥</div>
+      <div class="login-eyebrow">PURE COCONUT OIL</div>
+      <h1>Welcome to <span>Haritham</span></h1>
+      <p>A simpler way to manage your oil business — from inventory and purchases to customer billing and daily reports.</p>
+      <div class="login-points">
+        <div><b>✓</b> Sales and GST-ready billing</div>
+        <div><b>✓</b> Stock and purchase tracking</div>
+        <div><b>✓</b> Customer and supplier records</div>
+        <div><b>✓</b> Business reports in one place</div>
+      </div>
+      <div class="login-tagline">PURE BY NATURE. TRUSTED EVERY DAY.</div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-box">
+      <div class="mini">HARITHAM OIL STORE</div>
+      <h2>Welcome Back</h2>
+      <p>Sign in to manage Haritham sales, stock, purchases and billing.</p>
+      <form onsubmit="login(event)">
+        <div class="form-group">
+          <label>USERNAME</label>
+          <input class="form-control" id="username" value="admin" placeholder="Enter username" required>
+        </div>
+        <div class="form-group">
+          <label>PASSWORD</label>
+          <input class="form-control" id="password" type="password" value="admin123" placeholder="Enter password" required>
+        </div>
+        <button class="login-btn" type="submit">Sign In →</button>
+      </form>
+      <div class="demo">Demo login: <b>admin</b> / <b>admin123</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION -->
+<section class="app" id="app" hidden>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img class="brand-logo" src="data:image/jpeg;base64,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" alt="Haritham logo">
+      <div class="brand-name">Haritham <small>PURE COCONUT OIL</small></div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">⌂</span> Dashboard</div>
+
+      <div class="nav-section">USER MANAGEMENT</div>
+      <div class="nav-item" onclick="toggleSub('usersSub',this)"><span class="nav-icon">👥</span> Users <span class="nav-arrow">⌄</span></div>
+      <div class="subnav" id="usersSub">
+        <div onclick="showPage('users',this)">Users Master</div>
+        <div onclick="showPage('roles',this)">Role Master</div>
+      </div>
+
+      <div class="nav-section">MASTERS</div>
+      <div class="nav-item" onclick="toggleSub('mastersSub',this)"><span class="nav-icon">⚙</span> Masters <span class="nav-arrow">⌄</span></div>
+      <div class="subnav" id="mastersSub">
+        <div onclick="showPage('products',this)">Product Master</div>
+        <div onclick="showPage('rawmaterials',this)">Raw Material Master</div>
+        <div onclick="showPage('packaging',this)">Packaging Master</div>
+        <div onclick="showPage('customers',this)">Customer Master</div>
+        <div onclick="showPage('suppliers',this)">Supplier Master</div>
+        <div onclick="showPage('units',this)">Unit Master</div>
+        <div onclick="showPage('expenses',this)">Expense Master</div>
+        <div onclick="showPage('company',this)">Company Details</div>
+      </div>
+
+      <div class="nav-section">TRANSACTIONS</div>
+      <div class="nav-item" onclick="toggleSub('transSub',this)"><span class="nav-icon">↔</span> Transactions <span class="nav-arrow">⌄</span></div>
+      <div class="subnav" id="transSub">
+        <div onclick="showPage('purchase',this)">Coconut Purchase</div>
+        <div onclick="showPage('purchaseOther',this)">Other Purchases</div>
+        <div onclick="showPage('production',this)">Oil Production</div>
+        <div onclick="showPage('stockIn',this)">Stock In</div>
+        <div onclick="showPage('sales',this)">Sales History</div>
+        <div onclick="showPage('stockOut',this)">Stock Out / Adjustment</div>
+        <div onclick="showPage('payments',this)">Payments & Receipts</div>
+        <div onclick="showPage('expensesTxn',this)">Expense Transactions</div>
+      </div>
+
+      <div class="nav-section">BILLING</div>
+      <div class="nav-item" onclick="toggleSub('billingSub',this)"><span class="nav-icon">▣</span> Billing <span class="nav-arrow">⌄</span></div>
+      <div class="subnav" id="billingSub">
+        <div onclick="showPage('billing',this)">New Bill</div>
+        <div onclick="showPage('sales',this)">Billing History</div>
+        <div onclick="showPage('heldBills',this)">Held Bills</div>
+        <div onclick="showPage('cancelledBills',this)">Cancelled Bills</div>
+        <div onclick="showPage('returns',this)">Returns / Credit Notes</div>
+      </div>
+
+      <div class="nav-section">REPORTS</div>
+      <div class="nav-item" onclick="toggleSub('reportsSub',this)"><span class="nav-icon">▥</span> Reports <span class="nav-arrow">⌄</span></div>
+      <div class="subnav" id="reportsSub">
+        <div onclick="showPage('salesReport',this)">Sales Report</div>
+        <div onclick="showPage('purchaseReport',this)">Purchase Report</div>
+        <div onclick="showPage('productionReport',this)">Production Report</div>
+        <div onclick="showPage('stockReport',this)">Stock Report</div>
+        <div onclick="showPage('profitReport',this)">Profit & Loss</div>
+        <div onclick="showPage('outstandingReport',this)">Outstanding Report</div>
+        <div onclick="showPage('dailyReport',this)">Daily Summary</div>
+      </div>
+    </nav>
+
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center">
+        <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+        <div class="page-title"><h2 id="pageTitle">Dashboard</h2><p>Haritham Oil Store Management System</p></div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn">🔔</button>
+        <div class="profile-wrap">
+          <button class="profile" id="profileToggle" type="button" aria-haspopup="true" aria-expanded="false" onclick="toggleProfileMenu(event)">
+            <div class="avatar">AD</div><div class="profile-label"><b>Admin User</b><small>Administrator</small></div><span class="profile-chevron">▾</span>
+          </button>
+          <div class="profile-menu" id="profileMenu" hidden>
+            <div class="profile-menu-user"><b>Admin User</b><small>Administrator</small></div>
+            <button type="button" onclick="logout(); closeProfileMenu();">↪ Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="dashboard">
+        <div class="welcome">
+          <div><h1>Good Morning, Admin 👋</h1><p>Here's what's happening in your oil mill today.</p></div>
+          <div class="date-chip">📅 07 October 2026</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><div class="stat-head"><span>TODAY'S SALES</span><span class="stat-icon">₹</span></div><h3>₹48,650</h3><div class="stat-foot"><span class="up">↑ 12.5%</span> vs yesterday</div></div>
+          <div class="stat"><div class="stat-head"><span>MONTHLY SALES</span><span class="stat-icon">↗</span></div><h3>₹8.42 L</h3><div class="stat-foot"><span class="up">↑ 8.3%</span> vs last month</div></div>
+          <div class="stat"><div class="stat-head"><span>OIL PRODUCTION</span><span class="stat-icon">🥥</span></div><h3>2,480 L</h3><div class="stat-foot">This month · 82% target</div></div>
+          <div class="stat"><div class="stat-head"><span>PENDING PAYMENTS</span><span class="stat-icon">!</span></div><h3>₹1.26 L</h3><div class="stat-foot"><span class="down">14 invoices</span> outstanding</div></div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title"><h3>Monthly Sales & Collection</h3><span>Last 6 months</span></div>
+            <div class="chart">
+              <div class="bar-group"><div class="bar" style="height:42%"></div><div class="bar gold" style="height:35%"></div><span class="month">May</span></div>
+              <div class="bar-group"><div class="bar" style="height:50%"></div><div class="bar gold" style="height:42%"></div><span class="month">Jun</span></div>
+              <div class="bar-group"><div class="bar" style="height:63%"></div><div class="bar gold" style="height:53%"></div><span class="month">Jul</span></div>
+              <div class="bar-group"><div class="bar" style="height:72%"></div><div class="bar gold" style="height:60%"></div><span class="month">Aug</span></div>
+              <div class="bar-group"><div class="bar" style="height:78%"></div><div class="bar gold" style="height:69%"></div><span class="month">Sep</span></div>
+              <div class="bar-group"><div class="bar" style="height:91%"></div><div class="bar gold" style="height:82%"></div><span class="month">Oct</span></div>
+            </div>
+            <div class="legend"><span><i></i>Sales</span><span><i class="gold"></i>Collections</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><h3>Stock Status</h3><span>Current inventory</span></div>
+            <div class="stock-list">
+              <div class="stock-row"><div class="stock-name"><b>Raw Coconut</b><small>4,820 kg</small></div><div class="stock-progress"><span style="width:82%"></span></div><div class="stock-status good">GOOD</div></div>
+              <div class="stock-row"><div class="stock-name"><b>Bulk Coconut Oil</b><small>1,240 L</small></div><div class="stock-progress"><span style="width:67%"></span></div><div class="stock-status good">GOOD</div></div>
+              <div class="stock-row"><div class="stock-name"><b>1 Litre Bottles</b><small>420 pcs</small></div><div class="stock-progress low"><span style="width:27%"></span></div><div class="stock-status lowtext">LOW</div></div>
+              <div class="stock-row"><div class="stock-name"><b>500 ml Bottles</b><small>860 pcs</small></div><div class="stock-progress"><span style="width:58%"></span></div><div class="stock-status good">GOOD</div></div>
+              <div class="stock-row"><div class="stock-name"><b>Oil Packets</b><small>1,850 pcs</small></div><div class="stock-progress"><span style="width:76%"></span></div><div class="stock-status good">GOOD</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-grid">
+          <div class="card">
+            <div class="card-title"><h3>Recent Sales</h3><span>View all →</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Customer</th><th>Products</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+              <tr><td><b>INV-1058</b></td><td>Fresh Mart</td><td>1L × 20</td><td class="amount">₹5,980</td><td><span class="status green">PAID</span></td></tr>
+              <tr><td><b>INV-1057</b></td><td>Krishna Stores</td><td>500ml × 30</td><td class="amount">₹4,770</td><td><span class="status yellow">CREDIT</span></td></tr>
+              <tr><td><b>INV-1056</b></td><td>Home Needs</td><td>1L × 12</td><td class="amount">₹3,588</td><td><span class="status green">PAID</span></td></tr>
+              <tr><td><b>INV-1055</b></td><td>Green Supermarket</td><td>Packets × 100</td><td class="amount">₹3,200</td><td><span class="status green">PAID</span></td></tr>
+            </tbody></table></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><h3>Pending Actions</h3><span>Today</span></div>
+            <div class="stock-list">
+              <div class="stock-row" style="grid-template-columns:1fr 60px"><div class="stock-name"><b>Low stock</b><small>1 Litre bottles need purchase</small></div><span class="status red">ALERT</span></div>
+              <div class="stock-row" style="grid-template-columns:1fr 60px"><div class="stock-name"><b>Supplier payment</b><small>Shree Coconut Traders · ₹38,500</small></div><span class="status yellow">DUE</span></div>
+              <div class="stock-row" style="grid-template-columns:1fr 60px"><div class="stock-name"><b>Production batch</b><small>Batch HR-261007 ready for packing</small></div><span class="status blue">READY</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div class="page" id="users">
+        <div class="toolbar"><h2>Users Master</h2><div class="filters"><input class="search" placeholder="Search users..."><button class="btn btn-green" onclick="openRecordModal(\'User\')">+ Add User</button></div></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>User ID</th><th>Name</th><th>Username</th><th>Role</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+          <tr><td>USR-001</td><td><b>Admin User</b></td><td>admin</td><td>Administrator</td><td>9876543210</td><td><span class="status green">ACTIVE</span></td><td><button class="action">Edit</button><button class="action delete">Disable</button></td></tr>
+          <tr><td>USR-002</td><td><b>Rahul Kumar</b></td><td>rahul</td><td>Sales Manager</td><td>9876501234</td><td><span class="status green">ACTIVE</span></td><td><button class="action">Edit</button><button class="action delete">Disable</button></td></tr>
+          <tr><td>USR-003</td><td><b>Manoj P</b></td><td>manoj</td><td>Store Keeper</td><td>9876512345</td><td><span class="status green">ACTIVE</span></td><td><button class="action">Edit</button><button class="action delete">Disable</button></td></tr>
+        </tbody></table></div></div>
+      </div>
+
+      <div class="page" id="roles">
+        <div class="toolbar">
+          <h2>Role Master</h2>
+          <button class="btn btn-green" onclick="alert('Add Role form can be connected to backend here.')">+ Add Role</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><h3>Roles</h3><span>Manage role-level access</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Role</th><th>Description</th><th>Users</th><th>Permissions</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><b>Administrator</b></td><td>Full system access</td><td>1</td><td>All modules</td><td><span class="status green">ACTIVE</span></td><td><button class="edit-btn" onclick="openRoleAccess('Administrator')">Edit Access</button></td></tr>
+                <tr><td><b>Sales Manager</b></td><td>Sales, customers & payments</td><td>2</td><td>Sales / Reports</td><td><span class="status green">ACTIVE</span></td><td><button class="edit-btn" onclick="openRoleAccess('Sales Manager')">Edit Access</button></td></tr>
+                <tr><td><b>Store Keeper</b></td><td>Stock & purchase management</td><td>1</td><td>Masters / Stock</td><td><span class="status green">ACTIVE</span></td><td><button class="edit-btn" onclick="openRoleAccess('Store Keeper')">Edit Access</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <div class="card-title">
+            <h3 id="roleAccessTitle">Role Access Control — Administrator</h3>
+            <span>View / Add / Edit / Delete / Export</span>
+          </div>
+          <div class="table-wrap">
+            <table class="permission-table">
+              <thead>
+                <tr><th>Module / Screen</th><th>View</th><th>Add</th><th>Edit</th><th>Delete</th><th>Export</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><b>Dashboard</b></td><td><input type="checkbox" checked></td><td>—</td><td>—</td><td>—</td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Users Master</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Role Master</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Company Details</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td>—</td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Product Master</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Raw Material Master</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Packaging Master</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Customer / Supplier Master</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Transactions</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Billing</td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td><td><input type="checkbox" checked></td></tr>
+                <tr><td>Reports</td><td><input type="checkbox" checked></td><td>—</td><td>—</td><td>—</td><td><input type="checkbox" checked></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="permission-note">These permissions are a frontend prototype. In the backend, enforce the same permissions server-side for every route/API.</div>
+          <div class="company-actions"><button class="btn btn-green" onclick="saveRoleAccess()">Save Access Control</button></div>
+        </div>
+      </div>
+
+      <!-- MASTER PAGES -->
+      <div class="page" id="products"><div class="toolbar"><h2>Product Master</h2><div class="filters"><input class="search" placeholder="Search products"><button class="btn btn-green" onclick="openRecordModal(\'Product\')">+ Add Product</button></div></div>
+        <div class="card"><table><thead><tr><th>Code</th><th>Product</th><th>Pack Size</th><th>Unit</th><th>Sale Price</th><th>Tax</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+          <tr><td>CO-001</td><td><b>Coconut Oil</b></td><td>1 Litre</td><td>Bottle</td><td>₹299</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-001')">Edit</button></td></tr>
+          <tr><td>CO-002</td><td><b>Coconut Oil</b></td><td>500 ml</td><td>Bottle</td><td>₹159</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-002')">Edit</button></td></tr>
+          <tr><td>CO-003</td><td><b>Coconut Oil</b></td><td>200 ml</td><td>Packet</td><td>₹72</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-003')">Edit</button></td></tr>
+        </tbody></table></div></div>
+
+      <div class="page" id="rawmaterials"><div class="toolbar"><h2>Raw Material Master</h2><button class="btn btn-green" onclick="openRecordModal(\'Raw Material\')">+ Add Raw Material</button></div><div class="card"><table><thead><tr><th>Code</th><th>Material</th><th>Unit</th><th>Reorder Level</th><th>Current Stock</th><th>Supplier</th><th>Actions</th></tr></thead><tbody>
+        <tr><td>RM-001</td><td><b>Fresh Coconut</b></td><td>Kg</td><td>1,000</td><td>4,820</td><td>Shree Coconut Traders</td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Raw Material','RM-001')">Edit</button></td></tr>
+        <tr><td>RM-002</td><td><b>Coconut Copra</b></td><td>Kg</td><td>500</td><td>920</td><td>Kerala Copra Mart</td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Raw Material','RM-002')">Edit</button></td></tr>
+        <tr><td>RM-003</td><td><b>Food Grade Oil Container</b></td><td>Nos</td><td>50</td><td>120</td><td>PackPro Industries</td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Raw Material','RM-003')">Edit</button></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="packaging"><div class="toolbar"><h2>Packaging Master</h2><button class="btn btn-green" onclick="openRecordModal(\'Packaging\')">+ Add Packaging</button></div><div class="card"><table><thead><tr><th>Code</th><th>Packaging Item</th><th>Size</th><th>Unit</th><th>Stock</th><th>Reorder</th><th>Actions</th></tr></thead><tbody>
+        <tr><td>PK-001</td><td><b>1 Litre Bottle</b></td><td>1L</td><td>Nos</td><td>420</td><td>500</td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Packaging','PK-001')">Edit</button></td></tr>
+        <tr><td>PK-002</td><td><b>500 ml Bottle</b></td><td>500ml</td><td>Nos</td><td>860</td><td>400</td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Packaging','PK-002')">Edit</button></td></tr>
+        <tr><td>PK-003</td><td><b>200 ml Oil Packet</b></td><td>200ml</td><td>Nos</td><td>1,850</td><td>800</td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Packaging','PK-003')">Edit</button></td></tr>
+        <tr><td>PK-004</td><td><b>Label Sticker</b></td><td>Standard</td><td>Nos</td><td>3,800</td><td>1,000</td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Packaging','PK-004')">Edit</button></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="customers"><div class="toolbar"><h2>Customer Master</h2><div class="filters"><input class="search" placeholder="Search customer"><button class="btn btn-green" onclick="openRecordModal(\'Customer\')">+ Add Customer</button></div></div><div class="card"><table><thead><tr><th>Code</th><th>Customer</th><th>Type</th><th>Phone</th><th>Credit Limit</th><th>Outstanding</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+        <tr><td>CUS-001</td><td><b>Fresh Mart</b></td><td>Retailer</td><td>9847012345</td><td>₹50,000</td><td>₹8,250</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Customer','CUS-001')">Edit</button></td></tr>
+        <tr><td>CUS-002</td><td><b>Krishna Stores</b></td><td>Retailer</td><td>9847023456</td><td>₹30,000</td><td>₹12,600</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Customer','CUS-002')">Edit</button></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="suppliers"><div class="toolbar"><h2>Supplier Master</h2><button class="btn btn-green" onclick="openRecordModal(\'Supplier\')">+ Add Supplier</button></div><div class="card"><table><thead><tr><th>Code</th><th>Supplier</th><th>Items</th><th>Phone</th><th>Payable</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+        <tr><td>SUP-001</td><td><b>Shree Coconut Traders</b></td><td>Fresh Coconut</td><td>9850012345</td><td>₹38,500</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Supplier','SUP-001')">Edit</button></td></tr>
+        <tr><td>SUP-002</td><td><b>PackPro Industries</b></td><td>Bottles / Packets</td><td>9850067890</td><td>₹14,200</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Supplier','SUP-002')">Edit</button></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="units"><div class="toolbar"><h2>Unit Master</h2><button class="btn btn-green" onclick="openRecordModal(\'Unit\')">+ Add Unit</button></div><div class="card"><table><thead><tr><th>Unit</th><th>Symbol</th><th>Usage</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+        <tr><td><b>Kilogram</b></td><td>Kg</td><td>Raw coconut / copra</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Unit','Kg')">Edit</button></td></tr>
+        <tr><td><b>Litre</b></td><td>L</td><td>Bulk oil / sales</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Unit','L')">Edit</button></td></tr>
+        <tr><td><b>Piece</b></td><td>Nos</td><td>Bottles / packets</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Unit','Nos')">Edit</button></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="expenses"><div class="toolbar"><h2>Expense Master</h2><button class="btn btn-green" onclick="openRecordModal(\'Expense Head\')">+ Add Expense Head</button></div><div class="card"><table><thead><tr><th>Expense Head</th><th>Category</th><th>Description</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+        <tr><td><b>Electricity</b></td><td>Factory</td><td>Monthly power bill</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Expense Head','Electricity')">Edit</button></td></tr>
+        <tr><td><b>Transport</b></td><td>Logistics</td><td>Purchase & delivery transport</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Expense Head','Transport')">Edit</button></td></tr>
+        <tr><td><b>Labour</b></td><td>Production</td><td>Daily production labour</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Expense Head','Labour')">Edit</button></td></tr>
+        <tr><td><b>Maintenance</b></td><td>Factory</td><td>Machine maintenance</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Expense Head','Maintenance')">Edit</button></td></tr>
+      </tbody></table></div></div>
+
+
+      <!-- COMPANY DETAILS -->
+      <div class="page" id="company">
+        <div class="toolbar">
+          <h2>Company Details</h2>
+          <div class="filters"><span class="status green">GST / Invoice Configuration</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><h3>Business Information</h3><span>Used on sales invoices and reports</span></div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>COMPANY / BUSINESS NAME *</label>
+              <input id="companyName" value="Haritham">
+            </div>
+            <div class="form-field">
+              <label>GSTIN *</label>
+              <input id="companyGstin" value="29ABCDE1234F1Z5" placeholder="e.g. 29ABCDE1234F1Z5" maxlength="15">
+            </div>
+            <div class="form-field">
+              <label>PAN</label>
+              <input id="companyPan" value="ABCDE1234F">
+            </div>
+            <div class="form-field">
+              <label>PHONE</label>
+              <input id="companyPhone" value="9876543210">
+            </div>
+            <div class="form-field">
+              <label>EMAIL</label>
+              <input id="companyEmail" value="accounts@harithamoil.com">
+            </div>
+            <div class="form-field">
+              <label>STATE</label>
+              <input id="companyState" value="Karnataka">
+            </div>
+            <div class="form-field">
+              <label>STATE CODE</label>
+              <input id="companyStateCode" value="29">
+            </div>
+            <div class="form-field">
+              <label>INVOICE PREFIX</label>
+              <input id="companyInvoicePrefix" value="INV">
+            </div>
+            <div class="form-field full">
+              <label>REGISTERED / BILLING ADDRESS *</label>
+              <textarea id="companyAddress"></textarea>
+            </div>
+          </div>
+          <div class="company-actions">
+            <button class="btn btn-light" onclick="loadCompanyDetails()">Reset</button>
+            <button class="btn btn-green" onclick="saveCompanyDetails()">Save / Update Company Details</button>
+          </div>
+          <div class="permission-note">The prototype stores these values in browser localStorage. In the production application, save them in a company/settings table and validate GSTIN on the server.</div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS -->
+      <div class="page" id="purchase"><div class="toolbar"><h2>Coconut Purchase</h2><button class="btn btn-green" onclick="openRecordModal('Purchase')">+ New Purchase</button></div>
+        <div class="kpi-grid"><div class="kpi"><small>THIS MONTH</small><h3>₹4.86 L</h3><p>Total coconut purchases</p></div><div class="kpi"><small>QUANTITY</small><h3>18,420 Kg</h3><p>Fresh coconut purchased</p></div><div class="kpi"><small>AVERAGE RATE</small><h3>₹26.38</h3><p>Average purchase per Kg</p></div></div>
+        <div class="card" style="margin-top:18px"><div class="card-title"><h3>Recent Coconut Purchases</h3><span>October 2026</span></div><table><thead><tr><th>Purchase No</th><th>Date</th><th>Supplier</th><th>Qty</th><th>Rate/Kg</th><th>Total</th><th>Payment</th></tr></thead><tbody>
+          <tr><td><b>PUR-2088</b></td><td>07-10-2026</td><td>Shree Coconut Traders</td><td>1,500 Kg</td><td>₹26.00</td><td class="amount">₹39,000</td><td><span class="status yellow">CREDIT</span></td></tr>
+          <tr><td><b>PUR-2087</b></td><td>06-10-2026</td><td>Kerala Copra Mart</td><td>1,250 Kg</td><td>₹27.50</td><td class="amount">₹34,375</td><td><span class="status green">PAID</span></td></tr>
+          <tr><td><b>PUR-2086</b></td><td>05-10-2026</td><td>Shree Coconut Traders</td><td>1,800 Kg</td><td>₹25.80</td><td class="amount">₹46,440</td><td><span class="status green">PAID</span></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <div class="page" id="purchaseOther"><div class="toolbar"><h2>Other Purchases</h2><button class="btn btn-green" onclick="openRecordModal('Purchase')">+ New Purchase</button></div><div class="card"><table><thead><tr><th>Invoice</th><th>Date</th><th>Supplier</th><th>Item</th><th>Qty</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+        <tr><td><b>OP-1024</b></td><td>06-10-2026</td><td>PackPro Industries</td><td>1L Bottles</td><td>1,000 Nos</td><td class="amount">₹16,500</td><td><span class="status green">PAID</span></td></tr>
+        <tr><td><b>OP-1023</b></td><td>04-10-2026</td><td>Print House</td><td>Labels</td><td>5,000 Nos</td><td class="amount">₹7,800</td><td><span class="status yellow">CREDIT</span></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="production"><div class="toolbar"><h2>Oil Production</h2><button class="btn btn-green">+ Create Production Batch</button></div>
+        <div class="kpi-grid"><div class="kpi"><small>TODAY</small><h3>420 L</h3><p>Oil produced today</p></div><div class="kpi"><small>THIS MONTH</small><h3>2,480 L</h3><p>Total production</p></div><div class="kpi"><small>RECOVERY</small><h3>18.4%</h3><p>Average oil recovery</p></div></div>
+        <div class="card" style="margin-top:18px"><div class="card-title"><h3>Production Batches</h3><span>Track raw material → oil → packing</span></div><table><thead><tr><th>Batch</th><th>Date</th><th>Raw Coconut</th><th>Oil Produced</th><th>Recovery</th><th>By-product</th><th>Status</th></tr></thead><tbody>
+          <tr><td><b>CP-261007</b></td><td>07-10-2026</td><td>2,280 Kg</td><td>420 L</td><td>18.42%</td><td>1,620 Kg</td><td><span class="status blue">READY</span></td></tr>
+          <tr><td><b>CP-261006</b></td><td>06-10-2026</td><td>2,050 Kg</td><td>386 L</td><td>18.83%</td><td>1,450 Kg</td><td><span class="status green">COMPLETED</span></td></tr>
+          <tr><td><b>CP-261005</b></td><td>05-10-2026</td><td>2,200 Kg</td><td>402 L</td><td>18.27%</td><td>1,550 Kg</td><td><span class="status green">COMPLETED</span></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <div class="page" id="stockIn"><div class="toolbar"><h2>Stock In</h2><button class="btn btn-green">+ Stock Receipt</button></div><div class="card"><table><thead><tr><th>Receipt</th><th>Date</th><th>Item</th><th>Type</th><th>Qty</th><th>Reference</th><th>Status</th></tr></thead><tbody>
+        <tr><td><b>STI-4082</b></td><td>07-10-2026</td><td>Fresh Coconut</td><td>Raw Material</td><td>1,500 Kg</td><td>PUR-2088</td><td><span class="status green">POSTED</span></td></tr>
+        <tr><td><b>STI-4081</b></td><td>06-10-2026</td><td>Coconut Oil</td><td>Production</td><td>386 L</td><td>CP-261006</td><td><span class="status green">POSTED</span></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="sales"><div class="toolbar"><h2>Sales / Billing</h2><div class="filters"><input class="search" placeholder="Search invoice/customer"><button class="btn btn-gold">🖨 Print</button><button class="btn btn-green">+ New Invoice</button></div></div>
+        <div class="kpi-grid"><div class="kpi"><small>TODAY</small><h3>₹48,650</h3><p>23 invoices</p></div><div class="kpi"><small>MONTH</small><h3>₹8.42 L</h3><p>386 invoices</p></div><div class="kpi"><small>CREDIT SALES</small><h3>₹1.26 L</h3><p>14 pending invoices</p></div></div>
+        <div class="card" style="margin-top:18px"><div class="card-title"><h3>Sales Invoices</h3><span>Products: 1L / 500ml / Packets</span></div><table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Items</th><th>Subtotal</th><th>Payment</th><th>Total</th></tr></thead><tbody>
+          <tr><td><b>INV-1058</b></td><td>07-10-2026</td><td>Fresh Mart</td><td>1L × 20</td><td>₹5,980</td><td><span class="status green">UPI</span></td><td class="amount">₹5,980</td></tr>
+          <tr><td><b>INV-1057</b></td><td>07-10-2026</td><td>Krishna Stores</td><td>500ml × 30</td><td>₹4,770</td><td><span class="status yellow">CREDIT</span></td><td class="amount">₹4,770</td></tr>
+          <tr><td><b>INV-1056</b></td><td>07-10-2026</td><td>Home Needs</td><td>1L × 12</td><td>₹3,588</td><td><span class="status green">CASH</span></td><td class="amount">₹3,588</td></tr>
+        </tbody></table></div>
+      </div>
+
+
+      <!-- BILLING SUPPORT PAGES -->
+      <div class="page" id="heldBills">
+        <div class="toolbar"><h2>Held Bills</h2><button class="btn btn-green" onclick="showPage('billing',this)">+ New Bill</button></div>
+        <div class="card"><div class="card-title"><h3>Held / Draft Bills</h3><span>Invoices saved temporarily</span></div>
+        <table><thead><tr><th>Bill No</th><th>Date</th><th>Customer</th><th>Amount</th><th>Saved By</th><th>Action</th></tr></thead><tbody>
+          <tr><td><b>HLD-1021</b></td><td>07-10-2026</td><td>Krishna Stores</td><td class="amount">₹4,770</td><td>Admin User</td><td><button class="btn btn-light" onclick="showPage('billing',this)">Resume</button></td></tr>
+          <tr><td><b>HLD-1020</b></td><td>07-10-2026</td><td>Walk-in Customer</td><td class="amount">₹1,245</td><td>Rahul Kumar</td><td><button class="btn btn-light" onclick="showPage('billing',this)">Resume</button></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <div class="page" id="cancelledBills">
+        <div class="toolbar"><h2>Cancelled Bills</h2></div>
+        <div class="card"><div class="card-title"><h3>Cancelled Invoices</h3><span>Sales billing audit trail</span></div>
+        <table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Amount</th><th>Reason</th><th>Status</th></tr></thead><tbody>
+          <tr><td><b>INV-1048</b></td><td>05-10-2026</td><td>Fresh Mart</td><td class="amount">₹2,990</td><td>Wrong quantity</td><td><span class="status red">CANCELLED</span></td></tr>
+          <tr><td><b>INV-1039</b></td><td>03-10-2026</td><td>Home Needs</td><td class="amount">₹1,794</td><td>Duplicate invoice</td><td><span class="status red">CANCELLED</span></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <div class="page" id="returns">
+        <div class="toolbar"><h2>Returns / Credit Notes</h2><button class="btn btn-green">+ New Credit Note</button></div>
+        <div class="kpi-grid"><div class="kpi"><small>THIS MONTH</small><h3>₹18,420</h3><p>Sales returns</p></div><div class="kpi"><small>RETURNS</small><h3>12</h3><p>Credit notes issued</p></div><div class="kpi"><small>PENDING</small><h3>3</h3><p>Return approvals</p></div></div>
+        <div class="card" style="margin-top:18px"><div class="card-title"><h3>Recent Returns</h3><span>Finished oil products</span></div>
+        <table><thead><tr><th>Credit Note</th><th>Date</th><th>Invoice</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+          <tr><td><b>CN-204</b></td><td>06-10-2026</td><td>INV-1042</td><td>Krishna Stores</td><td>500 ml × 6</td><td class="amount">₹954</td><td><span class="status green">APPROVED</span></td></tr>
+          <tr><td><b>CN-203</b></td><td>04-10-2026</td><td>INV-1035</td><td>Fresh Mart</td><td>1 L × 4</td><td class="amount">₹1,196</td><td><span class="status yellow">PENDING</span></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- BILLING -->
+      <div class="page" id="billing">
+        <div class="toolbar">
+          <h2>Sales Billing / POS</h2>
+
+        </div>
+
+        <div class="billing-mode-tabs" role="tablist" aria-label="Billing type">
+          <button type="button" class="billing-mode-tab active" id="salesTabBtn" onclick="switchBillingMode('sales')">🧾 Sales Billing</button>
+          <button type="button" class="billing-mode-tab" id="purchaseTabBtn" onclick="switchBillingMode('purchase')">🥥 Coconut Purchase</button>
+        </div>
+
+        <section id="salesBillingPanel" class="billing-mode-panel">
+        <div class="billing-layout">
+          <div class="billing-left">
+            <div class="billing-head">
+              <h3>New Sales Invoice</h3>
+              <div class="invoice-chip">Invoice: <span id="invoiceNo">INV-1059</span></div>
+            </div>
+
+            <div class="billing-fields">
+              <div class="billing-field">
+                <label>CUSTOMER</label>
+                <select id="billCustomer" onchange="updateCustomer()">
+                  <option value="Walk-in Customer">Walk-in Customer</option>
+                  <option value="Fresh Mart">Fresh Mart</option>
+                  <option value="Krishna Stores">Krishna Stores</option>
+                  <option value="Home Needs">Home Needs</option>
+                  <option value="Green Supermarket">Green Supermarket</option>
+                </select>
+              </div>
+              <div class="billing-field">
+                <label>INVOICE DATE</label>
+                <input type="date" id="billDate" value="2026-10-07">
+              </div>
+              <div class="billing-field">
+                <label>PHONE</label>
+                <input id="billPhone" value="" placeholder="Customer phone">
+              </div>
+              <div class="billing-field">
+                <label>SALESPERSON</label>
+                <select>
+                  <option>Admin User</option>
+                  <option>Rahul Kumar</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="add-item-box">
+              <div class="add-item-grid">
+                <div class="product-field">
+                  <label>PRODUCT</label>
+                  <select id="billProduct">
+                    <option value="Coconut Oil 1 Litre" data-price="299">Coconut Oil - 1 Litre</option>
+                    <option value="Coconut Oil 500 ml" data-price="159">Coconut Oil - 500 ml</option>
+                    <option value="Coconut Oil Packet" data-price="72">Coconut Oil - Packet</option>
+                  </select>
+                </div>
+                <div>
+                  <label>PRICE</label>
+                  <input id="billPrice" type="number" value="299" min="0">
+                </div>
+                <div>
+                  <label>QTY</label>
+                  <input id="billQty" type="number" value="1" min="1">
+                </div>
+                <div>
+                  <label>DISCOUNT</label>
+                  <input id="billDiscount" type="number" value="0" min="0">
+                </div>
+                <button class="add-item-btn" onclick="addBillItem()">+ Add</button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="bill-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Rate</th>
+                    <th>Qty</th>
+                    <th>Discount</th>
+                    <th>Taxable</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="billItems"></tbody>
+              </table>
+            </div>
+
+            <div class="billing-actions">
+              <button class="hold-btn" onclick="alert('Invoice saved as draft.')">⏸ Hold Invoice</button>
+              <button class="clear-btn" onclick="clearBill()">Clear Items</button>
+            </div>
+          </div>
+
+          <div class="billing-right">
+            <h3>Invoice Summary</h3><div id="billingCompanyGstin" class="permission-note" style="margin-top:4px">GSTIN: 29ABCDE1234F1Z5</div>
+
+            <div class="customer-summary">
+              <b id="summaryCustomer">Walk-in Customer</b><br>
+              <span id="summaryPhone">No phone number</span>
+            </div>
+
+            <div class="summary-row"><span>Subtotal</span><b id="billSubtotal">₹0.00</b></div>
+            <div class="summary-row discount"><span>Discount</span><b id="billDiscountTotal">− ₹0.00</b></div>
+            <div class="summary-row"><span>Taxable Amount</span><b id="billTaxable">₹0.00</b></div>
+            <div class="summary-row"><span>GST (5%)</span><b id="billTax">₹0.00</b></div>
+            <div class="summary-row total"><span>Grand Total</span><span id="billGrandTotal">₹0.00</span></div>
+
+            <div class="payment-box">
+              <label>PAYMENT MODE</label>
+              <select id="paymentMode">
+                <option>Cash</option>
+                <option>UPI</option>
+                <option>Card</option>
+                <option>Bank Transfer</option>
+                <option>Credit</option>
+              </select>
+
+              <label>AMOUNT RECEIVED</label>
+              <input type="number" id="amountReceived" value="0" min="0" oninput="calculateBalance()">
+
+              <div class="summary-row">
+                <span>Balance / Credit</span>
+                <b id="billBalance">₹0.00</b>
+              </div>
+
+              <div class="payment-buttons">
+                <button class="print-btn" onclick="printInvoice()">🖨 Print</button>
+                <button class="save-btn" onclick="saveInvoice()">✓ Save Invoice</button>
+              </div>
+            </div>
+
+            <div class="bill-note">
+              Stock will be reduced automatically after invoice posting.<br>
+              Example GST rate is 5% and can be configured in Product Master.
+            </div>
+          </div>
+        </div>
+        </section>
+
+        <section id="coconutPurchasePanel" class="billing-mode-panel" hidden>
+          <div class="purchase-layout">
+            <div class="billing-left purchase-form-card">
+              <div class="billing-head"><h3>New Coconut Purchase Bill</h3><div class="invoice-chip">Purchase: <span id="purchaseInvoiceNo">CP-1001</span></div></div>
+              <div class="purchase-fields">
+                <div class="billing-field"><label>SUPPLIER</label><select id="purchaseSupplier"><option>Shree Coconut Traders</option><option>Kerala Copra Mart</option><option>Local Coconut Supplier</option><option>Other Supplier</option></select></div>
+                <div class="billing-field"><label>PURCHASE DATE</label><input type="date" id="purchaseDate" value="2026-10-16"></div>
+                <div class="billing-field"><label>SUPPLIER PHONE</label><input id="purchasePhone" placeholder="Supplier phone"></div>
+                <div class="billing-field"><label>SUPPLIER BILL / REF NO.</label><input id="supplierBillRef" placeholder="Optional reference"></div>
+              </div>
+              <div class="add-item-box purchase-add-box">
+                <div class="purchase-add-grid">
+                  <div><label>RAW MATERIAL</label><select id="purchaseMaterial"><option value="Fresh Coconut">Fresh Coconut</option><option value="Coconut Copra">Coconut Copra</option><option value="Coconut Kernel">Coconut Kernel</option></select></div>
+                  <div><label>QUANTITY (KG)</label><input id="purchaseQty" type="number" min="0.01" step="0.01" value="100"></div>
+                  <div><label>RATE / KG (₹)</label><input id="purchaseRate" type="number" min="0" step="0.01" value="25"></div>
+                  <button type="button" class="add-item-btn" onclick="addPurchaseItem()">+ Add</button>
+                </div>
+              </div>
+              <div class="table-wrap purchase-table-wrap"><table class="bill-table"><thead><tr><th>#</th><th>Raw Material</th><th>Qty (Kg)</th><th>Rate / Kg</th><th>Amount</th><th></th></tr></thead><tbody id="purchaseItems"><tr><td colspan="6" class="empty">Add coconut or raw material to this purchase bill.</td></tr></tbody></table></div>
+              <div class="billing-actions"><button type="button" class="hold-btn" onclick="alert('Purchase bill saved as draft.')">⏸ Hold Purchase</button><button type="button" class="clear-btn" onclick="clearPurchaseBill()">Clear Items</button></div>
+            </div>
+            <aside class="billing-right purchase-summary-card">
+              <h3>Purchase Bill Summary</h3>
+              <div class="customer-summary"><b id="purchaseSummarySupplier">Shree Coconut Traders</b><br><span id="purchaseSummaryRef">Supplier bill reference not entered</span></div>
+              <div class="summary-row"><span>Subtotal</span><b id="purchaseSubtotal">₹0.00</b></div>
+              <div class="summary-row"><span>Transport / Other Charges</span><b id="purchaseOtherChargesText">₹0.00</b></div>
+              <div class="billing-field purchase-charge-field"><label>TRANSPORT / OTHER CHARGES (₹)</label><input id="purchaseOtherCharges" type="number" min="0" value="0" oninput="renderPurchaseBill()"></div>
+              <div class="summary-row total"><span>Purchase Total</span><span id="purchaseGrandTotal">₹0.00</span></div>
+              <div class="payment-box">
+                <label>PAYMENT MODE</label><select id="purchasePaymentMode"><option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Credit</option></select>
+                <label>AMOUNT PAID</label><input id="purchaseAmountPaid" type="number" min="0" value="0" oninput="calculatePurchaseBalance()">
+                <div class="summary-row"><span>Balance / Payable</span><b id="purchaseBalance">₹0.00</b></div>
+                <div class="payment-buttons"><button type="button" class="print-btn" onclick="printPurchaseBill()">🖨 Print Bill</button><button type="button" class="save-btn" onclick="savePurchaseBill()">✓ Save Purchase</button></div>
+              </div>
+              <p class="bill-note">Purchase bill preview is generated from the entered supplier, quantity, rate and charges. This demo stores data in the current page only.</p>
+            </aside>
+          </div>
+        </section>
+      </div>
+
+      <div class="page" id="stockOut"><div class="toolbar"><h2>Stock Out / Adjustment</h2><button class="btn btn-green">+ New Adjustment</button></div><div class="card"><table><thead><tr><th>Ref</th><th>Date</th><th>Item</th><th>Transaction</th><th>Qty</th><th>Reason</th><th>Status</th></tr></thead><tbody>
+        <tr><td><b>SO-3021</b></td><td>07-10-2026</td><td>1 Litre Coconut Oil</td><td>Sales</td><td>-20 Nos</td><td>INV-1058</td><td><span class="status green">POSTED</span></td></tr>
+        <tr><td><b>ADJ-0088</b></td><td>06-10-2026</td><td>500 ml Bottle</td><td>Adjustment</td><td>-12 Nos</td><td>Damaged</td><td><span class="status yellow">APPROVED</span></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="payments"><div class="toolbar"><h2>Payments & Receipts</h2><button class="btn btn-green">+ New Payment</button></div><div class="kpi-grid"><div class="kpi"><small>RECEIVED THIS MONTH</small><h3>₹7.16 L</h3><p>Customer collections</p></div><div class="kpi"><small>PAID THIS MONTH</small><h3>₹4.72 L</h3><p>Supplier payments</p></div><div class="kpi"><small>NET CASH FLOW</small><h3>₹2.44 L</h3><p>Before expenses</p></div></div><div class="card" style="margin-top:18px"><table><thead><tr><th>Receipt No</th><th>Date</th><th>Party</th><th>Type</th><th>Mode</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+        <tr><td><b>REC-5201</b></td><td>07-10-2026</td><td>Fresh Mart</td><td>Customer Receipt</td><td>UPI</td><td class="amount">₹5,980</td><td><span class="status green">POSTED</span></td></tr>
+        <tr><td><b>PAY-3112</b></td><td>07-10-2026</td><td>Shree Coconut Traders</td><td>Supplier Payment</td><td>Bank</td><td class="amount">₹39,000</td><td><span class="status green">POSTED</span></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="expensesTxn"><div class="toolbar"><h2>Expense Transactions</h2><button class="btn btn-green">+ Add Expense</button></div><div class="card"><table><thead><tr><th>Voucher</th><th>Date</th><th>Expense</th><th>Description</th><th>Payment Mode</th><th>Amount</th></tr></thead><tbody>
+        <tr><td><b>EXP-9012</b></td><td>07-10-2026</td><td>Transport</td><td>Coconut pickup</td><td>Cash</td><td class="amount">₹3,200</td></tr>
+        <tr><td><b>EXP-9011</b></td><td>06-10-2026</td><td>Electricity</td><td>Factory power</td><td>Bank</td><td class="amount">₹12,800</td></tr>
+      </tbody></table></div></div>
+
+      <!-- REPORTS -->
+      <div class="page" id="salesReport"><div class="toolbar"><h2>Sales Report</h2><div class="filters"><select class="select"><option>October 2026</option><option>September 2026</option></select><button class="btn btn-gold">Export Excel</button></div></div><div class="kpi-grid"><div class="kpi"><small>GROSS SALES</small><h3>₹8.42 L</h3><p>386 invoices</p></div><div class="kpi"><small>1 LITRE SALES</small><h3>1,840 L</h3><p>₹5.49 L revenue</p></div><div class="kpi"><small>500 ML + PACKETS</small><h3>₹2.93 L</h3><p>₹2.93 L revenue</p></div></div><div class="card" style="margin-top:18px"><div class="card-title"><h3>Product-wise Sales</h3><span>October 2026</span></div><table><thead><tr><th>Product</th><th>Qty Sold</th><th>Sales Value</th><th>% of Sales</th></tr></thead><tbody>
+        <tr><td><b>Coconut Oil 1 Litre</b></td><td>1,840 Nos</td><td class="amount">₹5,49,160</td><td>65.2%</td></tr>
+        <tr><td><b>Coconut Oil 500 ml</b></td><td>1,180 Nos</td><td class="amount">₹1,87,620</td><td>22.3%</td></tr>
+        <tr><td><b>Coconut Oil Packets</b></td><td>2,450 Nos</td><td class="amount">₹85,220</td><td>10.1%</td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="purchaseReport"><div class="toolbar"><h2>Purchase Report</h2><div class="filters"><select class="select"><option>October 2026</option></select><button class="btn btn-gold">Export Excel</button></div></div><div class="card"><table><thead><tr><th>Supplier</th><th>Fresh Coconut</th><th>Other Materials</th><th>Total Purchase</th><th>Paid</th><th>Payable</th></tr></thead><tbody>
+        <tr><td><b>Shree Coconut Traders</b></td><td>₹3,82,000</td><td>₹0</td><td class="amount">₹3,82,000</td><td>₹3,43,500</td><td>₹38,500</td></tr>
+        <tr><td><b>Kerala Copra Mart</b></td><td>₹74,500</td><td>₹0</td><td class="amount">₹74,500</td><td>₹74,500</td><td>₹0</td></tr>
+        <tr><td><b>PackPro Industries</b></td><td>₹0</td><td>₹42,800</td><td class="amount">₹42,800</td><td>₹28,600</td><td>₹14,200</td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="productionReport"><div class="toolbar"><h2>Production Report</h2><div class="filters"><select class="select"><option>October 2026</option></select><button class="btn btn-gold">Export Excel</button></div></div><div class="kpi-grid"><div class="kpi"><small>RAW MATERIAL USED</small><h3>13,480 Kg</h3><p>Fresh coconut</p></div><div class="kpi"><small>OIL PRODUCED</small><h3>2,480 L</h3><p>Finished bulk oil</p></div><div class="kpi"><small>AVG. RECOVERY</small><h3>18.39%</h3><p>Production efficiency</p></div></div><div class="card" style="margin-top:18px"><div class="card-title"><h3>Daily Production</h3></div><table><thead><tr><th>Date</th><th>Raw Coconut</th><th>Oil Produced</th><th>Recovery</th><th>Batches</th></tr></thead><tbody>
+        <tr><td>07-10-2026</td><td>2,280 Kg</td><td class="amount">420 L</td><td>18.42%</td><td>1</td></tr>
+        <tr><td>06-10-2026</td><td>2,050 Kg</td><td class="amount">386 L</td><td>18.83%</td><td>1</td></tr>
+        <tr><td>05-10-2026</td><td>2,200 Kg</td><td class="amount">402 L</td><td>18.27%</td><td>1</td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="stockReport"><div class="toolbar"><h2>Stock Report</h2><div class="filters"><select class="select"><option>All Stock</option><option>Raw Materials</option><option>Finished Goods</option></select><button class="btn btn-gold">Export Excel</button></div></div><div class="card"><table><thead><tr><th>Item</th><th>Category</th><th>Unit</th><th>Opening</th><th>In</th><th>Out</th><th>Closing</th><th>Status</th></tr></thead><tbody>
+        <tr><td><b>Fresh Coconut</b></td><td>Raw Material</td><td>Kg</td><td>3,320</td><td>18,400</td><td>16,900</td><td>4,820</td><td><span class="status green">GOOD</span></td></tr>
+        <tr><td><b>Coconut Oil</b></td><td>Bulk Oil</td><td>L</td><td>980</td><td>2,480</td><td>2,220</td><td>1,240</td><td><span class="status green">GOOD</span></td></tr>
+        <tr><td><b>1 Litre Bottle</b></td><td>Packaging</td><td>Nos</td><td>620</td><td>1,000</td><td>1,200</td><td>420</td><td><span class="status red">LOW</span></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="profitReport"><div class="toolbar"><h2>Profit & Loss</h2><div class="filters"><select class="select"><option>October 2026</option></select><button class="btn btn-gold">Export</button></div></div><div class="kpi-grid"><div class="kpi"><small>REVENUE</small><h3>₹8.42 L</h3><p>Gross sales</p></div><div class="kpi"><small>COST</small><h3>₹5.86 L</h3><p>Purchase + production + expenses</p></div><div class="kpi"><small>EST. PROFIT</small><h3>₹2.56 L</h3><p>30.4% estimated margin</p></div></div><div class="card" style="margin-top:18px"><table><thead><tr><th>Particular</th><th>Amount</th><th>% of Revenue</th></tr></thead><tbody>
+        <tr><td>Sales Revenue</td><td class="amount">₹8,42,000</td><td>100%</td></tr>
+        <tr><td>Raw Material Purchase</td><td>₹4,86,000</td><td>57.7%</td></tr>
+        <tr><td>Packaging & Other Purchase</td><td>₹65,000</td><td>7.7%</td></tr>
+        <tr><td>Operating Expenses</td><td>₹35,000</td><td>4.2%</td></tr>
+        <tr><td><b>Estimated Net Profit</b></td><td class="amount"><b>₹2,56,000</b></td><td><b>30.4%</b></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="outstandingReport"><div class="toolbar"><h2>Outstanding Report</h2><div class="filters"><select class="select"><option>Customers</option><option>Suppliers</option></select><button class="btn btn-gold">Export</button></div></div><div class="card"><table><thead><tr><th>Party</th><th>Type</th><th>Total</th><th>Paid</th><th>Outstanding</th><th>Age</th><th>Status</th></tr></thead><tbody>
+        <tr><td><b>Krishna Stores</b></td><td>Customer</td><td>₹32,800</td><td>₹20,200</td><td class="amount">₹12,600</td><td>18 Days</td><td><span class="status yellow">DUE</span></td></tr>
+        <tr><td><b>Shree Coconut Traders</b></td><td>Supplier</td><td>₹3,82,000</td><td>₹3,43,500</td><td class="amount">₹38,500</td><td>3 Days</td><td><span class="status yellow">DUE</span></td></tr>
+      </tbody></table></div></div>
+
+      <div class="page" id="dailyReport"><div class="toolbar"><h2>Daily Business Summary</h2><div class="filters"><input class="select" type="date" value="2026-10-07"><button class="btn btn-gold">Print Summary</button></div></div><div class="kpi-grid"><div class="kpi"><small>SALES</small><h3>₹48,650</h3><p>23 invoices</p></div><div class="kpi"><small>PURCHASE</small><h3>₹39,000</h3><p>1 coconut purchase</p></div><div class="kpi"><small>PRODUCTION</small><h3>420 L</h3><p>1 production batch</p></div></div><div class="card" style="margin-top:18px"><div class="card-title"><h3>Daily Summary</h3></div><table><tbody>
+        <tr><td><b>Opening Cash</b></td><td>₹1,42,500</td></tr>
+        <tr><td><b>Sales Collection</b></td><td class="amount">+ ₹31,250</td></tr>
+        <tr><td><b>Supplier Payments</b></td><td>− ₹39,000</td></tr>
+        <tr><td><b>Expenses</b></td><td>− ₹6,200</td></tr>
+        <tr><td><b>Closing Cash</b></td><td class="amount">₹1,28,550</td></tr>
+      </tbody></table></div></div>
+
+    </div>
+  </main>
+</section>
+
+<script>
+const titles={
+ dashboard:"Dashboard",billing:"Sales Billing / POS",users:"Users Master",roles:"Role Master",company:"Company Details",products:"Product Master",
+ rawmaterials:"Raw Material Master",packaging:"Packaging Master",customers:"Customer Master",
+ suppliers:"Supplier Master",units:"Unit Master",expenses:"Expense Master",purchase:"Coconut Purchase",
+ purchaseOther:"Other Purchases",production:"Oil Production",stockIn:"Stock In",sales:"Sales / Billing",
+ stockOut:"Stock Out / Adjustment",payments:"Payments & Receipts",expensesTxn:"Expense Transactions",
+ billing:"Sales Billing / POS",heldBills:"Held Bills",cancelledBills:"Cancelled Bills",returns:"Returns / Credit Notes",
+ salesReport:"Sales Report",purchaseReport:"Purchase Report",productionReport:"Production Report",
+ stockReport:"Stock Report",profitReport:"Profit & Loss",outstandingReport:"Outstanding Report",
+ dailyReport:"Daily Business Summary"
+};
+
+
+function getCompany(){
+  const defaults={
+    name:"Haritham",gstin:"29ABCDE1234F1Z5",pan:"ABCDE1234F",
+    phone:"9876543210",email:"accounts@harithamoil.com",state:"Karnataka",
+    stateCode:"29",invoicePrefix:"INV",address:"Mangaluru, Karnataka, India"
+  };
+  try{return Object.assign(defaults, JSON.parse(localStorage.getItem("cocoCompanyDetails")||"{}"))}
+  catch(e){return defaults}
+}
+function saveCompanyDetails(){
+  const data={
+    name:document.getElementById("companyName").value.trim(),
+    gstin:document.getElementById("companyGstin").value.trim().toUpperCase(),
+    pan:document.getElementById("companyPan").value.trim().toUpperCase(),
+    phone:document.getElementById("companyPhone").value.trim(),
+    email:document.getElementById("companyEmail").value.trim(),
+    state:document.getElementById("companyState").value.trim(),
+    stateCode:document.getElementById("companyStateCode").value.trim(),
+    invoicePrefix:document.getElementById("companyInvoicePrefix").value.trim(),
+    address:document.getElementById("companyAddress").value.trim()
+  };
+  if(!data.name || !data.gstin || !data.address){alert("Company name, GSTIN and address are required.");return}
+  if(!/^[0-9A-Z]{15}$/.test(data.gstin)){alert("Please enter a valid 15-character GSTIN.");return}
+  localStorage.setItem("cocoCompanyDetails",JSON.stringify(data));
+  updateBillingCompany();
+  alert("Company details and GSTIN saved successfully.");
+}
+function loadCompanyDetails(){
+  const c=getCompany();
+  const map={companyName:"name",companyGstin:"gstin",companyPan:"pan",companyPhone:"phone",companyEmail:"email",companyState:"state",companyStateCode:"stateCode",companyInvoicePrefix:"invoicePrefix",companyAddress:"address"};
+  Object.keys(map).forEach(id=>{const el=document.getElementById(id);if(el)el.value=c[map[id]]||""});
+  updateBillingCompany();
+}
+function updateBillingCompany(){
+  const el=document.getElementById("billingCompanyGstin");
+  if(el)el.textContent="GSTIN: "+getCompany().gstin;
+}
+function openRoleAccess(role){
+  const title=document.getElementById("roleAccessTitle");
+  if(title)title.textContent="Role Access Control — "+role;
+  showPage("roles");
+  alert("Edit permissions for "+role+" using the permission matrix below.");
+}
+function saveRoleAccess(){
+  alert("Role access control saved successfully.");
+}
+function editMaster(type,code){
+  alert("Edit "+type+" : "+code+"\\n\\nThis button is ready to connect to an Add/Edit form and backend update.");
+}
+
+function login(e){
+  if(e){e.preventDefault();}
+  const username = document.getElementById("username");
+  const password = document.getElementById("password");
+  const loginPage = document.getElementById("loginPage");
+  const app = document.getElementById("app");
+  if(!username || !password || !loginPage || !app){
+    alert("Login page could not be initialized. Please reload this file.");
+    return false;
+  }
+  if(username.value.trim() !== "admin" || password.value !== "admin123"){
+    alert("Invalid username or password. Use admin / admin123 for the demo.");
+    return false;
+  }
+  loginPage.hidden = true;
+  loginPage.style.display = "none";
+  app.hidden = false;
+  app.style.display = "block";
+  document.body.style.background = "#f1f3ed";
+  if(typeof showPage === "function"){
+    showPage("dashboard", document.querySelector('.nav-item[onclick*="dashboard"]'));
+  }
+  return false;
+}
+function logout(){
+  const app = document.getElementById("app");
+  const loginPage = document.getElementById("loginPage");
+  if(app){app.hidden = true; app.style.display = "none";}
+  if(loginPage){loginPage.hidden = false; loginPage.style.display = "grid";}
+}
+function toggleSub(id,el){
+  const sub=document.getElementById(id);
+  sub.classList.toggle("open");
+}
+function showPage(id,el){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const page=document.getElementById(id);
+  if(page) page.classList.add("active");
+  document.getElementById("pageTitle").textContent=titles[id]||"Dashboard";
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  if(el && el.classList.contains("nav-item")) el.classList.add("active");
+  document.getElementById("sidebar").classList.remove("open");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+let billItems = [];
+
+document.addEventListener("DOMContentLoaded", function(){
+  loadCompanyDetails();
+  const product = document.getElementById("billProduct");
+  if(product){
+    product.addEventListener("change", function(){
+      const selected = this.options[this.selectedIndex];
+      document.getElementById("billPrice").value = selected.dataset.price || 0;
+    });
+  }
+  renderBill();
+});
+
+function money(n){
+  return "₹" + Number(n || 0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function addBillItem(){
+  const productEl=document.getElementById("billProduct");
+  const product=productEl.value;
+  const price=Number(document.getElementById("billPrice").value)||0;
+  const qty=Math.max(1,Number(document.getElementById("billQty").value)||1);
+  const discount=Math.max(0,Number(document.getElementById("billDiscount").value)||0);
+
+  const existing=billItems.find(x=>x.product===product && x.price===price && x.discount===discount);
+  if(existing){existing.qty+=qty;}
+  else{billItems.push({product,price,qty,discount});}
+
+  document.getElementById("billQty").value=1;
+  document.getElementById("billDiscount").value=0;
+  renderBill();
+}
+
+function removeBillItem(index){
+  billItems.splice(index,1);
+  renderBill();
+}
+
+function updateBillQty(index,value){
+  billItems[index].qty=Math.max(1,Number(value)||1);
+  renderBill();
+}
+
+function renderBill(){
+  const tbody=document.getElementById("billItems");
+  if(!tbody)return;
+  tbody.innerHTML="";
+  billItems.forEach((item,i)=>{
+    const gross=item.price*item.qty;
+    const discount=Math.min(item.discount,gross);
+    const taxable=gross-discount;
+    const tax=taxable*.05;
+    const total=taxable+tax;
+    tbody.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td><b>${item.product}</b></td>
+        <td>${money(item.price)}</td>
+        <td><input class="qty-input" type="number" min="1" value="${item.qty}" onchange="updateBillQty(${i},this.value)"></td>
+        <td>${money(discount)}</td>
+        <td>${money(taxable)}</td>
+        <td class="amount">${money(total)}</td>
+        <td><button class="remove-item" onclick="removeBillItem(${i})">×</button></td>
+      </tr>`;
+  });
+
+  if(!billItems.length){
+    tbody.innerHTML='<tr><td colspan="8" class="empty">No products added. Select a coconut oil product above.</td></tr>';
+  }
+
+  let subtotal=0,discountTotal=0,taxable=0;
+  billItems.forEach(item=>{
+    const gross=item.price*item.qty;
+    const d=Math.min(item.discount,gross);
+    subtotal+=gross; discountTotal+=d; taxable+=gross-d;
+  });
+  const tax=taxable*.05;
+  const total=taxable+tax;
+
+  document.getElementById("billSubtotal").textContent=money(subtotal);
+  document.getElementById("billDiscountTotal").textContent="− "+money(discountTotal);
+  document.getElementById("billTaxable").textContent=money(taxable);
+  document.getElementById("billTax").textContent=money(tax);
+  document.getElementById("billGrandTotal").textContent=money(total);
+  calculateBalance();
+}
+
+function calculateBalance(){
+  const totalText=document.getElementById("billGrandTotal");
+  if(!totalText)return;
+  const total=parseFloat(totalText.textContent.replace(/[₹,]/g,""))||0;
+  const received=Number(document.getElementById("amountReceived").value)||0;
+  const balance=total-received;
+  const el=document.getElementById("billBalance");
+  el.textContent=money(Math.abs(balance));
+  el.style.color=balance>0 ? "var(--red)" : "var(--green)";
+}
+
+function updateCustomer(){
+  const customer=document.getElementById("billCustomer").value;
+  const phones={
+    "Walk-in Customer":"No phone number",
+    "Fresh Mart":"9847012345",
+    "Krishna Stores":"9847023456",
+    "Home Needs":"9847034567",
+    "Green Supermarket":"9847045678"
+  };
+  document.getElementById("summaryCustomer").textContent=customer;
+  document.getElementById("summaryPhone").textContent=phones[customer]||"No phone number";
+  document.getElementById("billPhone").value=phones[customer]&&phones[customer]!="No phone number"?phones[customer]:"";
+}
+
+function clearBill(){
+  billItems=[];
+  document.getElementById("amountReceived").value=0;
+  renderBill();
+}
+
+function saveInvoice(){
+  if(!billItems.length){
+    alert("Please add at least one product.");
+    return;
+  }
+  alert("Invoice "+document.getElementById("invoiceNo").textContent+" saved successfully.");
+}
+
+function printInvoice(){
+  if(!billItems.length){
+    alert("Please add at least one product before printing.");
+    return;
+  }
+  const customer=document.getElementById("billCustomer").value;
+  const invoice=document.getElementById("invoiceNo").textContent;
+  const date=document.getElementById("billDate").value;
+  const total=document.getElementById("billGrandTotal").textContent;
+
+  let rows="";
+  billItems.forEach((item,i)=>{
+    const taxable=item.price*item.qty-Math.min(item.discount,item.price*item.qty);
+    rows+=`<tr><td>${i+1}</td><td>${item.product}</td><td>${item.qty}</td><td>${money(item.price)}</td><td>${money(taxable+taxable*.05)}</td></tr>`;
+  });
+
+  const w=window.open("","_blank","width=850,height=700");
+  w.document.write(`
+  <!doctype html><html><head><title>${invoice}</title>
+  <style>
+  body{font-family:Arial;padding:35px;color:#24352B}h1{color:#174A2E;margin:0}
+  .head{display:flex;justify-content:space-between;border-bottom:2px solid #174A2E;padding-bottom:18px}
+  .gold{color:#D9A441}.info{margin:22px 0;display:flex;justify-content:space-between}
+  table{width:100%;border-collapse:collapse}th{background:#174A2E;color:white;text-align:left;padding:10px;font-size:12px}
+  td{padding:10px;border-bottom:1px solid #ddd;font-size:12px}.total{margin-left:auto;width:280px;margin-top:20px}
+  .row{display:flex;justify-content:space-between;padding:7px}.grand{font-size:20px;font-weight:bold;border-top:2px solid #174A2E;padding-top:12px}
+  </style><style>
+
+/* 100% browser zoom desktop POS fit: compact vertical rhythm without hiding billing fields */
+@media screen and (min-width: 1200px) and (min-height: 700px) {
+  .page#billing.active { padding-top: 8px !important; }
+  .page#billing.active .toolbar { margin-bottom: 12px !important; min-height: 38px !important; }
+  .page#billing.active .toolbar h2 { font-size: 20px !important; line-height: 1.2 !important; }
+  .page#billing.active .toolbar .btn { padding: 9px 14px !important; min-height: 38px !important; font-size: 11px !important; }
+  .page#billing.active .billing-layout {
+    grid-template-columns: minmax(0, 1.72fr) minmax(300px, .72fr) !important;
+    gap: 12px !important;
+    align-items: start !important;
+  }
+  .page#billing.active .billing-left,
+  .page#billing.active .billing-right { padding: 16px !important; }
+  .page#billing.active .billing-head { margin-bottom: 12px !important; }
+  .page#billing.active .billing-head h3,
+  .page#billing.active .billing-right > h3 { font-size: 16px !important; line-height: 1.2 !important; margin-bottom: 8px !important; }
+  .page#billing.active .invoice-chip { padding: 8px 10px !important; font-size: 11px !important; }
+  .page#billing.active .billing-fields {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 9px !important; margin-bottom: 12px !important;
+  }
+  .page#billing.active .billing-field label,
+  .page#billing.active .add-item-grid label,
+  .page#billing.active .payment-box label { display:block; font-size: 10px !important; margin-bottom: 5px !important; line-height: 1.1 !important; }
+  .page#billing.active .billing-field input,
+  .page#billing.active .billing-field select { height: 36px !important; padding: 0 9px !important; font-size: 11px !important; }
+  .page#billing.active .add-item-box { padding: 10px !important; margin-bottom: 12px !important; }
+  .page#billing.active .add-item-grid { gap: 8px !important; }
+  .page#billing.active .add-item-grid select,
+  .page#billing.active .add-item-grid input,
+  .page#billing.active .add-item-btn { height: 36px !important; padding: 0 9px !important; font-size: 11px !important; }
+  .page#billing.active .bill-table th { padding: 10px 8px !important; font-size: 9px !important; }
+  .page#billing.active .bill-table td { padding: 8px !important; font-size: 10px !important; }
+  .page#billing.active .table-wrap { max-height: 100px !important; overflow: auto !important; }
+  .page#billing.active .billing-actions { margin-top: 10px !important; padding-top: 10px !important; }
+  .page#billing.active .billing-actions button { min-height: 36px !important; padding: 8px 12px !important; font-size: 11px !important; }
+  .page#billing.active .billing-right .permission-note { font-size: 11px !important; }
+  .page#billing.active .customer-summary { padding: 10px 12px !important; margin: 8px 0 10px !important; font-size: 11px !important; }
+  .page#billing.active .summary-row { padding: 6px 0 !important; font-size: 11px !important; }
+  .page#billing.active .summary-row.total { margin-top: 5px !important; padding: 9px 0 !important; }
+  .page#billing.active .summary-row.total span,
+  .page#billing.active .summary-row.total b { font-size: 16px !important; }
+  .page#billing.active .payment-box { margin-top: 10px !important; padding-top: 9px !important; }
+  .page#billing.active .payment-box select,
+  .page#billing.active .payment-box input { height: 34px !important; min-height: 34px !important; padding: 0 9px !important; font-size: 11px !important; margin-bottom: 8px !important; }
+  .page#billing.active .payment-buttons { gap: 8px !important; margin-top: 8px !important; }
+  .page#billing.active .payment-buttons button { height: 34px !important; min-height: 34px !important; padding: 7px 8px !important; font-size: 10px !important; }
+  .page#billing.active .bill-note { margin-top: 7px !important; font-size: 9px !important; line-height: 1.35 !important; }
+}
+
+/* Billing viewport-fit correction: keep payment controls visible at 100% zoom */
+#billing .billing-layout, .page#billing .billing-layout { align-items:start; gap:14px; }
+#billing .billing-right, .page#billing .billing-right {
+  padding:14px 16px !important;
+}
+#billing .billing-right h3, .page#billing .billing-right h3 {
+  margin:0 0 8px !important; font-size:17px !important; line-height:1.2 !important;
+}
+#billing .billing-right #billingCompanyGstin, .page#billing .billing-right #billingCompanyGstin {
+  margin:0 0 5px !important; font-size:11px !important; line-height:1.2 !important;
+}
+#billing .customer-summary, .page#billing .customer-summary {
+  padding:8px 10px !important; margin:0 0 8px !important; line-height:1.25 !important;
+}
+#billing .customer-summary b, .page#billing .customer-summary b { font-size:12px !important; }
+#billing .summary-row, .page#billing .summary-row {
+  padding:5px 0 !important; font-size:11px !important; line-height:1.2 !important;
+}
+#billing .summary-row.total, .page#billing .summary-row.total {
+  margin-top:4px !important; padding:8px 0 7px !important; font-size:16px !important;
+}
+#billing .payment-box, .page#billing .payment-box {
+  padding-top:8px !important; margin-top:6px !important;
+}
+#billing .payment-box label, .page#billing .payment-box label {
+  margin-bottom:3px !important; font-size:9px !important; line-height:1.15 !important;
+}
+#billing .payment-box select, #billing .payment-box input,
+.page#billing .payment-box select, .page#billing .payment-box input {
+  height:32px !important; margin-bottom:6px !important; padding:0 8px !important; font-size:11px !important;
+}
+#billing .payment-buttons, .page#billing .payment-buttons { gap:6px !important; margin-top:4px !important; }
+#billing .payment-buttons button, .page#billing .payment-buttons button { height:34px !important; font-size:10px !important; }
+#billing .bill-note, .page#billing .bill-note { margin-top:5px !important; font-size:8px !important; line-height:1.25 !important; }
+@media (min-width: 1100px) and (min-height: 700px) {
+  #billing .billing-layout, .page#billing .billing-layout { grid-template-columns:minmax(0,1.6fr) minmax(320px,.72fr) !important; }
+}
+
+</style>
+
+<style id="billing-heading-padding-final-fix">
+/* Remove the duplicate page heading inside Billing; keep the main header title. */
+#billing.active > .toolbar > h2 { display: none !important; }
+#billing.active > .toolbar { margin: 0 0 10px !important; min-height: 0 !important; padding: 0 !important; }
+#billing.active { padding-top: 10px !important; }
+#billing.active .billing-layout { margin-top: 0 !important; gap: 12px !important; }
+#billing.active .billing-left, #billing.active .billing-right { padding: 14px !important; }
+#billing.active .billing-head { margin-bottom: 12px !important; }
+#billing.active .billing-fields { margin-bottom: 12px !important; gap: 10px !important; }
+#billing.active .add-item-box { margin-bottom: 12px !important; padding: 10px !important; }
+</style>
+
+</head><body>
+  <div class="head"><div><h1>🥥 ${getCompany().name}</h1><div>${getCompany().address}<br>GSTIN: <b>${getCompany().gstin}</b> | Phone: ${getCompany().phone}</div></div><div><b>${invoice}</b><br>${date}</div></div>
+  <div class="info"><div><b>Bill To:</b><br>${customer}<br>${document.getElementById("billPhone").value||""}</div><div><b>Payment:</b><br>${document.getElementById("paymentMode").value}</div></div>
+  <table><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>
+  <div class="total"><div class="row"><span>Subtotal</span><b>${document.getElementById("billSubtotal").textContent}</b></div>
+  <div class="row"><span>Discount</span><b>${document.getElementById("billDiscountTotal").textContent}</b></div>
+  <div class="row"><span>GST 5%</span><b>${document.getElementById("billTax").textContent}</b></div>
+  <div class="row grand"><span>Grand Total</span><span>${total}</span></div></div>
+  <p style="text-align:center;margin-top:50px;font-size:11px">Thank you for choosing Haritham Pure Coconut Oil.</p>
+  <script>window.onload=function(){window.print()}<\/script>
+  
+<style id="restore-billing-100-percent">
+/* Restore normal 100% sizing for the billing page; no page-specific zoom. */
+#app { zoom: 1 !important; width: 100% !important; min-height: 100% !important; }
+.page#billing.active { zoom: 1 !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
+@media (min-width: 769px) { .page#billing.active { transform: none !important; } }
+</style>
+
+</body></html>`);
+  w.document.close();
+}
+
+
+let purchaseItems=[];
+function switchBillingMode(mode){
+  const sales=mode==='sales';
+  document.getElementById('salesBillingPanel').hidden=!sales;
+  document.getElementById('coconutPurchasePanel').hidden=sales;
+  document.getElementById('salesTabBtn').classList.toggle('active',sales);
+  document.getElementById('purchaseTabBtn').classList.toggle('active',!sales);
+  const title=document.querySelector('#billing .toolbar h2');
+  if(title) title.textContent=sales?'Sales Billing / POS':'Coconut Purchase';
+  if(!sales) renderPurchaseBill();
+}
+function addPurchaseItem(){
+  const material=document.getElementById('purchaseMaterial').value;
+  const qty=Math.max(0,Number(document.getElementById('purchaseQty').value)||0);
+  const rate=Math.max(0,Number(document.getElementById('purchaseRate').value)||0);
+  if(qty<=0){alert('Enter a quantity greater than zero.');return;}
+  const existing=purchaseItems.find(x=>x.material===material&&x.rate===rate);
+  if(existing) existing.qty+=qty; else purchaseItems.push({material,qty,rate});
+  renderPurchaseBill();
+}
+function removePurchaseItem(index){purchaseItems.splice(index,1);renderPurchaseBill();}
+function renderPurchaseBill(){
+  const body=document.getElementById('purchaseItems');if(!body)return;
+  body.innerHTML='';
+  purchaseItems.forEach((item,i)=>{body.innerHTML+=`<tr><td>${i+1}</td><td><b>${item.material}</b></td><td>${item.qty.toLocaleString('en-IN',{maximumFractionDigits:2})} kg</td><td>${money(item.rate)}</td><td class="amount">${money(item.qty*item.rate)}</td><td><button type="button" class="remove-item" onclick="removePurchaseItem(${i})">×</button></td></tr>`;});
+  if(!purchaseItems.length)body.innerHTML='<tr><td colspan="6" class="empty">Add coconut or raw material to this purchase bill.</td></tr>';
+  const subtotal=purchaseItems.reduce((sum,item)=>sum+item.qty*item.rate,0);
+  const charges=Math.max(0,Number(document.getElementById('purchaseOtherCharges').value)||0);
+  const total=subtotal+charges;
+  document.getElementById('purchaseSubtotal').textContent=money(subtotal);
+  document.getElementById('purchaseOtherChargesText').textContent=money(charges);
+  document.getElementById('purchaseGrandTotal').textContent=money(total);
+  document.getElementById('purchaseSummarySupplier').textContent=document.getElementById('purchaseSupplier').value;
+  document.getElementById('purchaseSummaryRef').textContent=document.getElementById('supplierBillRef').value.trim()||'Supplier bill reference not entered';
+  calculatePurchaseBalance();
+}
+function calculatePurchaseBalance(){
+  const total=parseFloat((document.getElementById('purchaseGrandTotal')?.textContent||'₹0').replace(/[₹,]/g,''))||0;
+  const paid=Math.max(0,Number(document.getElementById('purchaseAmountPaid').value)||0);
+  const balance=total-paid;const el=document.getElementById('purchaseBalance');
+  el.textContent=(balance<0?'Credit / Advance: ':'')+money(Math.abs(balance));el.style.color=balance>0?'var(--red)':'var(--green)';
+}
+function clearPurchaseBill(){purchaseItems=[];document.getElementById('purchaseAmountPaid').value=0;renderPurchaseBill();}
+function savePurchaseBill(){
+  if(!purchaseItems.length){alert('Please add at least one raw material to the purchase bill.');return;}
+  alert('Purchase bill '+document.getElementById('purchaseInvoiceNo').textContent+' saved successfully. Total: '+document.getElementById('purchaseGrandTotal').textContent+'.');
+}
+function printPurchaseBill(){
+  if(!purchaseItems.length){alert('Please add at least one raw material before printing.');return;}
+  const supplier=document.getElementById('purchaseSupplier').value;
+  const date=document.getElementById('purchaseDate').value;
+  const ref=document.getElementById('supplierBillRef').value.trim()||'—';
+  const rows=purchaseItems.map((item,i)=>`<tr><td>${i+1}</td><td>${item.material}</td><td>${item.qty} kg</td><td>${money(item.rate)}</td><td>${money(item.qty*item.rate)}</td></tr>`).join('');
+  const w=window.open('','_blank','width=850,height=700');if(!w){alert('Allow pop-ups to print the purchase bill.');return;}
+  w.document.write(`<!doctype html><html><head><title>${document.getElementById('purchaseInvoiceNo').textContent}</title><style>body{font-family:Arial;padding:32px;color:#24352b}h1{color:#234f36}table{width:100%;border-collapse:collapse;margin-top:22px}th{background:#234f36;color:white;text-align:left;padding:10px}td{padding:10px;border-bottom:1px solid #ddd}.total{text-align:right;font-size:20px;font-weight:bold;margin-top:22px}</style></head><body><h1>Haritham — Coconut Purchase Bill</h1><p><b>Purchase No:</b> ${document.getElementById('purchaseInvoiceNo').textContent}<br><b>Date:</b> ${date}<br><b>Supplier:</b> ${supplier}<br><b>Supplier Reference:</b> ${ref}</p><table><thead><tr><th>#</th><th>Raw Material</th><th>Quantity</th><th>Rate</th><th>Amount</th></tr></thead><tbody>${rows}</tbody></table><p class="total">Total: ${document.getElementById('purchaseGrandTotal').textContent}</p><p>Payment Mode: ${document.getElementById('purchasePaymentMode').value} | Amount Paid: ${money(Number(document.getElementById('purchaseAmountPaid').value)||0)} | Balance: ${document.getElementById('purchaseBalance').textContent}</p><script>window.onload=function(){window.print()}<\/script>
+<style id="restore-billing-100-percent">
+/* Restore normal 100% sizing for the billing page; no page-specific zoom. */
+#app { zoom: 1 !important; width: 100% !important; min-height: 100% !important; }
+.page#billing.active { zoom: 1 !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
+@media (min-width: 769px) { .page#billing.active { transform: none !important; } }
+</style>
+
+</body></html>`);w.document.close();
+}
+document.addEventListener('DOMContentLoaded',function(){
+  ['purchaseSupplier','supplierBillRef'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',renderPurchaseBill);});
+  const pd=document.getElementById('purchaseDate');if(pd&&!pd.value)pd.value=new Date().toISOString().slice(0,10);
+  renderPurchaseBill();
+});
+
+function toggleProfileMenu(event){
+  if(event) event.stopPropagation();
+  const menu=document.getElementById("profileMenu");
+  const toggle=document.getElementById("profileToggle");
+  if(!menu || !toggle) return;
+  const opening=menu.hidden;
+  menu.hidden=!opening;
+  toggle.setAttribute("aria-expanded",String(opening));
+}
+function closeProfileMenu(){
+  const menu=document.getElementById("profileMenu");
+  const toggle=document.getElementById("profileToggle");
+  if(menu) menu.hidden=true;
+  if(toggle) toggle.setAttribute("aria-expanded","false");
+}
+document.addEventListener("click",function(event){
+  const wrap=document.querySelector(".profile-wrap");
+  if(wrap && !wrap.contains(event.target)) closeProfileMenu();
+});
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open")}
+
+document.addEventListener("DOMContentLoaded", function(){
+  const form = document.querySelector("#loginPage form");
+  if(form){form.addEventListener("submit", login);}
+  const loginPage = document.getElementById("loginPage");
+  const app = document.getElementById("app");
+  if(loginPage && app && !app.hidden){app.hidden = true; app.style.display = "none";}
+});
+</script>
+
+<style id="restore-billing-100-percent">
+/* Restore normal 100% sizing for the billing page; no page-specific zoom. */
+#app { zoom: 1 !important; width: 100% !important; min-height: 100% !important; }
+.page#billing.active { zoom: 1 !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
+@media (min-width: 769px) { .page#billing.active { transform: none !important; } }
+</style>
+
+</body>
+</html>
