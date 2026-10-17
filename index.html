@@ -1176,29 +1176,71 @@ tbody tr:hover{background:#f8faf4!important}
       </tbody></table></div></div>
 
       <div class="page" id="production">
-        <div class="toolbar"><h2>Coconut Processing &amp; Oil Production</h2></div>
-        <div class="kpi-grid processing-kpis">
-          <div class="kpi"><small>COCONUT PROCESSED</small><h3 id="processingTotalCoconut">0 kg</h3><p>Whole coconut input</p></div>
-          <div class="kpi"><small>SHELL SEPARATED</small><h3 id="processingTotalShell">0 kg</h3><p>Shell recovered</p></div>
-          <div class="kpi"><small>WHITE FLESH RECOVERED</small><h3 id="processingTotalFlesh">0 kg</h3><p>White coconut flesh</p></div>
-          <div class="kpi"><small>COCONUT OIL MADE</small><h3 id="processingTotalOil">0 L</h3><p>Oil produced</p></div>
+        <div class="toolbar"><h2>Coconut Stock &amp; Processing</h2><span class="status blue">Batch workflow</span></div>
+        <div class="card stock-overview-card">
+          <div class="card-title"><h3>Available Coconut Stock</h3><span>Balances update when you record purchases and complete each stage</span></div>
+          <div class="coconut-stock-grid">
+            <div class="coconut-stock-item"><span>Fresh coconut</span><b id="stockFreshCoconut">0 kg</b></div>
+            <div class="coconut-stock-item"><span>Coconut in drying</span><b id="stockDryingCoconut">0 kg</b></div>
+            <div class="coconut-stock-item"><span>Dried copra</span><b id="stockCopra">0 kg</b></div>
+            <div class="coconut-stock-item"><span>Coconut shell</span><b id="stockCoconutShell">0 kg</b></div>
+            <div class="coconut-stock-item"><span>Copra cake</span><b id="stockCopraCake">0 kg</b></div>
+            <div class="coconut-stock-item"><span>Coconut oil</span><b id="stockCoconutOil">0 L</b></div>
+          </div>
+          <div class="opening-stock-row">
+            <span>Have stock before starting this tracker?</span>
+            <input id="openingFreshCoconutKg" type="number" min="0.01" step="0.01" placeholder="Opening fresh coconut (kg)">
+            <button class="btn btn-light" type="button" onclick="addOpeningCoconutStock()">Add opening stock</button>
+          </div>
+        </div>
+        <div class="process-steps">
+          <section class="card process-step">
+            <div class="process-step-heading"><span class="process-step-number">1</span><div><h3>Dry coconut</h3><small>Copra preparation · takes 4–5 days</small></div></div>
+            <p>Take fresh coconut from available stock and start a drying batch.</p>
+            <div class="process-form-grid">
+              <div class="billing-field"><label for="dryingStartDate">START DATE</label><input id="dryingStartDate" type="date"></div>
+              <div class="billing-field"><label for="dryingDays">DRYING TIME</label><select id="dryingDays"><option value="4">4 days</option><option value="5" selected>5 days</option></select></div>
+              <div class="billing-field"><label for="dryingPurchaseRef">PURCHASE / LOT REF</label><input id="dryingPurchaseRef" placeholder="Optional reference"></div>
+              <div class="billing-field"><label for="dryingInputKg">FRESH COCONUT TAKEN (KG)</label><input id="dryingInputKg" type="number" min="0.01" step="0.01" placeholder="e.g. 250"></div>
+            </div>
+            <div class="process-step-footer"><span>Available: <b id="dryingAvailableText">0 kg</b></span><button class="btn btn-green" type="button" onclick="startDryingBatch()">Start drying batch</button></div>
+          </section>
+          <section class="card process-step">
+            <div class="process-step-heading"><span class="process-step-number">2</span><div><h3>Remove husk &amp; shell</h3><small>Record coconut shell and copra recovered</small></div></div>
+            <p>Complete drying, then record the shell and dried copra separated from the batch.</p>
+            <div class="process-form-grid">
+              <div class="billing-field"><label for="dehuskingBatch">DRYING BATCH</label><select id="dehuskingBatch"></select></div>
+              <div class="billing-field"><label for="dehuskingDate">SEPARATION DATE</label><input id="dehuskingDate" type="date"></div>
+              <div class="billing-field"><label for="dehuskingShellKg">COCONUT SHELL RECOVERED (KG)</label><input id="dehuskingShellKg" type="number" min="0" step="0.01" value="0"></div>
+              <div class="billing-field"><label for="dehuskingCopraKg">DRIED COPRA RECOVERED (KG)</label><input id="dehuskingCopraKg" type="number" min="0.01" step="0.01" placeholder="e.g. 90"></div>
+            </div>
+            <div class="process-step-footer"><span id="dehuskingBatchHint">Select a batch that has finished drying.</span><button class="btn btn-green" type="button" onclick="completeDehuskingBatch()">Save shell &amp; copra stock</button></div>
+          </section>
+          <section class="card process-step">
+            <div class="process-step-heading"><span class="process-step-number">3</span><div><h3>Extract coconut oil</h3><small>Copra goes in · oil and cake come out</small></div></div>
+            <p>Choose a copra batch, enter how much is pressed, then record the oil and copra cake produced.</p>
+            <div class="process-form-grid">
+              <div class="billing-field"><label for="extractionBatch">COPRA BATCH</label><select id="extractionBatch"></select></div>
+              <div class="billing-field"><label for="extractionCopraKg">COPRA USED (KG)</label><input id="extractionCopraKg" type="number" min="0.01" step="0.01" placeholder="e.g. 50"></div>
+              <div class="billing-field"><label for="extractionOilLitres">COCONUT OIL MADE (LITRES)</label><input id="extractionOilLitres" type="number" min="0.01" step="0.01" placeholder="e.g. 28"></div>
+              <div class="billing-field"><label for="extractionCakeKg">COPRA CAKE MADE (KG)</label><input id="extractionCakeKg" type="number" min="0" step="0.01" value="0"></div>
+            </div>
+            <div class="process-step-footer"><span>Copra remaining in batch: <b id="extractionAvailableText">0 kg</b></span><button class="btn btn-green" type="button" onclick="recordOilExtraction()">Add oil &amp; cake to stock</button></div>
+          </section>
         </div>
         <div class="card processing-card">
-          <div class="card-title"><h3>Record a Processing Batch</h3><span>Enter weights in kg and oil output in litres</span></div>
-          <div class="processing-form">
-            <div class="billing-field"><label for="processingDate">PROCESSING DATE</label><input id="processingDate" type="date"></div>
-            <div class="billing-field"><label for="processingPurchaseRef">PURCHASE / LOT REFERENCE</label><input id="processingPurchaseRef" placeholder="Optional purchase reference"></div>
-            <div class="billing-field"><label for="processingCoconutKg">WHOLE COCONUT PROCESSED (KG)</label><input id="processingCoconutKg" type="number" min="0.01" step="0.01" placeholder="e.g. 250"></div>
-            <div class="billing-field"><label for="processingShellKg">SHELL SEPARATED (KG)</label><input id="processingShellKg" type="number" min="0" step="0.01" value="0"></div>
-            <div class="billing-field"><label for="processingFleshKg">WHITE FLESH RECOVERED (KG)</label><input id="processingFleshKg" type="number" min="0" step="0.01" value="0"></div>
-            <div class="billing-field"><label for="processingOilLitres">COCONUT OIL PRODUCED (LITRES)</label><input id="processingOilLitres" type="number" min="0" step="0.01" value="0"></div>
-            <div class="billing-field"><label for="processingCakeKg">COCONUT CAKE PRODUCED (KG)</label><input id="processingCakeKg" type="number" min="0" step="0.01" value="0"></div>
+          <div class="card-title"><h3>Overall Production Totals</h3><span>Totals from all batches recorded in this browser</span></div>
+          <div class="processing-overall-grid">
+            <div><span>Coconut taken for drying</span><b id="overallCoconutProcessed">0 kg</b></div>
+            <div><span>Shell separated</span><b id="overallShellProduced">0 kg</b></div>
+            <div><span>Copra recovered</span><b id="overallCopraProduced">0 kg</b></div>
+            <div><span>Copra pressed</span><b id="overallCopraUsed">0 kg</b></div>
+            <div><span>Oil produced</span><b id="overallOilProduced">0 L</b></div>
+            <div><span>Copra cake produced</span><b id="overallCakeProduced">0 kg</b></div>
           </div>
-          <div id="processingBalance" class="processing-balance">Unaccounted weight / moisture loss: 0 kg</div>
-          <div class="processing-actions"><span class="permission-note">Batch records are saved in this browser on this device.</span><button class="btn btn-green" type="button" onclick="saveProcessingBatch()">+ Save Processing Batch</button></div>
         </div>
-        <div class="card processing-card"><div class="card-title"><h3>Processing Batch History</h3><span>Shell, flesh, oil and cake outputs by batch</span></div>
-          <div class="table-wrap"><table><thead><tr><th>Batch</th><th>Date</th><th>Purchase / Lot Ref</th><th>Coconut In (kg)</th><th>Shell (kg)</th><th>White Flesh (kg)</th><th>Oil (L)</th><th>Cake (kg)</th><th>Other Loss (kg)</th></tr></thead><tbody id="processingBatchRows"><tr><td colspan="9" class="empty">No processing batches recorded yet.</td></tr></tbody></table></div>
+        <div class="card processing-card"><div class="card-title"><h3>Batch History</h3><span>Follow each batch from drying through oil extraction</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Batch</th><th>Purchase / Lot</th><th>Drying Started</th><th>Ready From</th><th>Coconut In (kg)</th><th>Shell (kg)</th><th>Copra Made (kg)</th><th>Copra Left (kg)</th><th>Copra Pressed (kg)</th><th>Oil Made (L)</th><th>Cake Made (kg)</th><th>Status</th></tr></thead><tbody id="processingBatchRows"><tr><td colspan="12" class="empty">No processing batches yet. Add fresh coconut through Coconut Purchase, then start a drying batch.</td></tr></tbody></table></div>
         </div>
       </div>
 
@@ -1915,6 +1957,8 @@ function printInvoice(){
 
 let purchaseItems=[];
 let processingBatches=[];
+let processingStock={freshKg:0,dryingKg:0,copraKg:0,shellKg:0,cakeKg:0,oilLitres:0};
+const processingStockKey="cocoProcessStockV2",processingBatchKey="cocoProcessBatchesV2";
 function localISODate(){
   const now=new Date();
   return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
@@ -1924,72 +1968,31 @@ function formatProcessingNumber(value){return Number(value||0).toLocaleString("e
 function escapeProcessingHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));}
 function initProcessingTracker(){
   try{
-    const stored=JSON.parse(localStorage.getItem("cocoProcessingBatches")||"[]");
-    processingBatches=Array.isArray(stored)?stored:[];
+    processingBatches=JSON.parse(localStorage.getItem(processingBatchKey)||"[]");
+    processingStock={...processingStock,...JSON.parse(localStorage.getItem(processingStockKey)||"{}")} ;
+    if(!Array.isArray(processingBatches))processingBatches=[];
   }catch(error){processingBatches=[];}
-  const date=document.getElementById("processingDate");
-  if(date&&!date.value)date.value=localISODate();
-  ["processingCoconutKg","processingShellKg","processingFleshKg"].forEach(id=>{
-    const input=document.getElementById(id);if(input)input.addEventListener("input",updateProcessingBalance);
-  });
-  updateProcessingBalance();
+  ["dryingStartDate","dehuskingDate"].forEach(id=>{const el=document.getElementById(id);if(el&&!el.value)el.value=localISODate();});
+  ["dehuskingBatch","extractionBatch"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("change",renderProcessingBatches);});
+  renderProductionStock();
   renderProcessingBatches();
 }
-function updateProcessingBalance(){
-  const raw=processingNumber("processingCoconutKg");
-  const shell=processingNumber("processingShellKg");
-  const flesh=processingNumber("processingFleshKg");
-  const difference=raw-shell-flesh;
-  const label=document.getElementById("processingBalance");
-  if(!label)return;
-  if(difference < -0.005){
-    label.textContent=`Shell and white flesh exceed the coconut input by ${formatProcessingNumber(Math.abs(difference))} kg.`;
-    label.classList.add("over");
-  }else{
-    label.textContent=`Unaccounted weight / moisture loss: ${formatProcessingNumber(Math.max(0,difference))} kg`;
-    label.classList.remove("over");
-  }
-}
-function saveProcessingBatch(){
-  const raw=processingNumber("processingCoconutKg");
-  const shell=processingNumber("processingShellKg");
-  const flesh=processingNumber("processingFleshKg");
-  const oil=processingNumber("processingOilLitres");
-  const cake=processingNumber("processingCakeKg");
-  if(raw<=0){alert("Enter the whole coconut quantity processed in kg.");document.getElementById("processingCoconutKg").focus();return;}
-  if(shell+flesh>raw+0.005){alert("Shell and white flesh cannot total more than the whole coconut input.");return;}
-  const date=document.getElementById("processingDate").value||localISODate();
-  const batch={
-    id:`PB-${Date.now()}`,
-    date,
-    reference:document.getElementById("processingPurchaseRef").value.trim(),
-    coconutKg:raw,
-    shellKg:shell,
-    fleshKg:flesh,
-    oilLitres:oil,
-    cakeKg:cake
-  };
-  processingBatches.unshift(batch);
-  try{localStorage.setItem("cocoProcessingBatches",JSON.stringify(processingBatches));}
-  catch(error){processingBatches.shift();alert("This browser could not save the batch. Check available browser storage and try again.");return;}
-  ["processingCoconutKg","processingShellKg","processingFleshKg","processingOilLitres","processingCakeKg","processingPurchaseRef"].forEach(id=>{document.getElementById(id).value=id==="processingShellKg"||id==="processingFleshKg"||id==="processingOilLitres"||id==="processingCakeKg"?"0":"";});
-  document.getElementById("processingDate").value=localISODate();
-  updateProcessingBalance();
-  renderProcessingBatches();
-}
+function persistProcessing(){try{localStorage.setItem(processingStockKey,JSON.stringify(processingStock));localStorage.setItem(processingBatchKey,JSON.stringify(processingBatches));return true;}catch(e){alert("Could not save this change in this browser. Check available storage and try again.");return false;}}
+function renderProductionStock(){const v={stockFreshCoconut:`${formatProcessingNumber(processingStock.freshKg)} kg`,stockDryingCoconut:`${formatProcessingNumber(processingStock.dryingKg)} kg`,stockCopra:`${formatProcessingNumber(processingStock.copraKg)} kg`,stockCoconutShell:`${formatProcessingNumber(processingStock.shellKg)} kg`,stockCopraCake:`${formatProcessingNumber(processingStock.cakeKg)} kg`,stockCoconutOil:`${formatProcessingNumber(processingStock.oilLitres)} L`,dryingAvailableText:`${formatProcessingNumber(processingStock.freshKg)} kg`};Object.entries(v).forEach(([id,x])=>{const el=document.getElementById(id);if(el)el.textContent=x;});}
+function addOpeningCoconutStock(){const kg=processingNumber("openingFreshCoconutKg");if(kg<=0){alert("Enter opening fresh coconut stock in kg.");return;}processingStock.freshKg+=kg;if(!persistProcessing()){processingStock.freshKg-=kg;return;}document.getElementById("openingFreshCoconutKg").value="";renderProductionStock();}
+function startDryingBatch(){const kg=processingNumber("dryingInputKg"),days=Number(document.getElementById("dryingDays").value)||5,date=document.getElementById("dryingStartDate").value||localISODate();if(kg<=0){alert("Enter fresh coconut quantity for this batch.");return;}if(kg>processingStock.freshKg+0.001){alert("Batch quantity is greater than fresh coconut stock available.");return;}const ready=new Date(`${date}T00:00:00`);ready.setDate(ready.getDate()+days);const readyDate=`${ready.getFullYear()}-${String(ready.getMonth()+1).padStart(2,"0")}-${String(ready.getDate()).padStart(2,"0")}`;const b={id:`PB-${date.replaceAll("-","")}-${String(processingBatches.length+1).padStart(3,"0")}`,reference:document.getElementById("dryingPurchaseRef").value.trim(),startDate:date,readyDate,freshKg:kg,shellKg:0,copraMadeKg:0,copraRemainingKg:0,copraUsedKg:0,oilLitres:0,cakeKg:0,status:"Drying"};processingBatches.unshift(b);processingStock.freshKg-=kg;processingStock.dryingKg+=kg;if(!persistProcessing()){processingBatches.shift();processingStock.freshKg+=kg;processingStock.dryingKg-=kg;return;}document.getElementById("dryingInputKg").value="";document.getElementById("dryingPurchaseRef").value="";renderProductionStock();renderProcessingBatches();}
+function completeDehuskingBatch(){const b=processingBatches.find(x=>x.id===document.getElementById("dehuskingBatch").value);if(!b){alert("Select a drying batch first.");return;}const date=document.getElementById("dehuskingDate").value||localISODate(),shell=processingNumber("dehuskingShellKg"),copra=processingNumber("dehuskingCopraKg");if(date<b.readyDate){alert(`This batch is scheduled to finish drying on ${b.readyDate}.`);return;}if(copra<=0||shell+copra>b.freshKg+0.001){alert("Enter copra recovered. Shell plus copra cannot exceed the original batch weight.");return;}b.shellKg=shell;b.copraMadeKg=copra;b.copraRemainingKg=copra;b.separationDate=date;b.status="Ready for extraction";processingStock.dryingKg-=b.freshKg;processingStock.shellKg+=shell;processingStock.copraKg+=copra;if(!persistProcessing()){processingStock.dryingKg+=b.freshKg;processingStock.shellKg-=shell;processingStock.copraKg-=copra;b.shellKg=b.copraMadeKg=b.copraRemainingKg=0;b.status="Drying";return;}document.getElementById("dehuskingShellKg").value="0";document.getElementById("dehuskingCopraKg").value="";renderProductionStock();renderProcessingBatches();}
+function recordOilExtraction(){const b=processingBatches.find(x=>x.id===document.getElementById("extractionBatch").value);if(!b){alert("Select a copra batch first.");return;}const used=processingNumber("extractionCopraKg"),oil=processingNumber("extractionOilLitres"),cake=processingNumber("extractionCakeKg");if(used<=0||oil<=0){alert("Enter copra used and litres of oil produced.");return;}if(used>b.copraRemainingKg+0.001){alert("Copra used exceeds the selected batch balance.");return;}b.copraRemainingKg-=used;b.copraUsedKg+=used;b.oilLitres+=oil;b.cakeKg+=cake;b.status=b.copraRemainingKg>0.001?"Partially extracted":"Complete";processingStock.copraKg-=used;processingStock.oilLitres+=oil;processingStock.cakeKg+=cake;if(!persistProcessing()){processingStock.copraKg+=used;processingStock.oilLitres-=oil;processingStock.cakeKg-=cake;b.copraRemainingKg+=used;b.copraUsedKg-=used;b.oilLitres-=oil;b.cakeKg-=cake;return;}document.getElementById("extractionCopraKg").value="";document.getElementById("extractionOilLitres").value="";document.getElementById("extractionCakeKg").value="0";renderProductionStock();renderProcessingBatches();}
 function renderProcessingBatches(){
   const sum=key=>processingBatches.reduce((total,batch)=>total+(Number(batch[key])||0),0);
-  document.getElementById("processingTotalCoconut").textContent=`${formatProcessingNumber(sum("coconutKg"))} kg`;
-  document.getElementById("processingTotalShell").textContent=`${formatProcessingNumber(sum("shellKg"))} kg`;
-  document.getElementById("processingTotalFlesh").textContent=`${formatProcessingNumber(sum("fleshKg"))} kg`;
-  document.getElementById("processingTotalOil").textContent=`${formatProcessingNumber(sum("oilLitres"))} L`;
+  const totals={overallCoconutProcessed:`${formatProcessingNumber(sum("freshKg"))} kg`,overallShellProduced:`${formatProcessingNumber(sum("shellKg"))} kg`,overallCopraProduced:`${formatProcessingNumber(sum("copraMadeKg"))} kg`,overallCopraUsed:`${formatProcessingNumber(sum("copraUsedKg"))} kg`,overallOilProduced:`${formatProcessingNumber(sum("oilLitres"))} L`,overallCakeProduced:`${formatProcessingNumber(sum("cakeKg"))} kg`};Object.entries(totals).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value;});
+  const ds=document.getElementById("dehuskingBatch"),es=document.getElementById("extractionBatch"),oldD=ds?.value,oldE=es?.value;
+  if(ds){const a=processingBatches.filter(b=>b.status==="Drying");ds.innerHTML='<option value="">Select drying batch</option>'+a.map(b=>`<option value="${escapeProcessingHtml(b.id)}">${escapeProcessingHtml(b.id)} · ${formatProcessingNumber(b.freshKg)} kg · ready ${escapeProcessingHtml(b.readyDate)}</option>`).join("");if(a.some(b=>b.id===oldD))ds.value=oldD;const b=a.find(x=>x.id===ds.value),hint=document.getElementById("dehuskingBatchHint");if(hint)hint.textContent=b?`Ready from ${b.readyDate} · input ${formatProcessingNumber(b.freshKg)} kg`:(a.length?"Select a batch that has finished drying.":"No batches are waiting for separation.");}
+  if(es){const a=processingBatches.filter(b=>b.copraRemainingKg>0.001);es.innerHTML='<option value="">Select copra batch</option>'+a.map(b=>`<option value="${escapeProcessingHtml(b.id)}">${escapeProcessingHtml(b.id)} · ${formatProcessingNumber(b.copraRemainingKg)} kg available</option>`).join("");if(a.some(b=>b.id===oldE))es.value=oldE;const b=a.find(x=>x.id===es.value),el=document.getElementById("extractionAvailableText");if(el)el.textContent=`${formatProcessingNumber(b?.copraRemainingKg||0)} kg`;}
   const rows=document.getElementById("processingBatchRows");
   if(!rows)return;
-  if(!processingBatches.length){rows.innerHTML='<tr><td colspan="9" class="empty">No processing batches recorded yet.</td></tr>';return;}
-  rows.innerHTML=processingBatches.map(batch=>{
-    const other=Math.max(0,(Number(batch.coconutKg)||0)-(Number(batch.shellKg)||0)-(Number(batch.fleshKg)||0));
-    return `<tr><td><b>${escapeProcessingHtml(batch.id)}</b></td><td>${escapeProcessingHtml(batch.date)}</td><td>${escapeProcessingHtml(batch.reference||"—")}</td><td>${formatProcessingNumber(batch.coconutKg)}</td><td>${formatProcessingNumber(batch.shellKg)}</td><td>${formatProcessingNumber(batch.fleshKg)}</td><td>${formatProcessingNumber(batch.oilLitres)}</td><td>${formatProcessingNumber(batch.cakeKg)}</td><td>${formatProcessingNumber(other)}</td></tr>`;
-  }).join("");
+  if(!processingBatches.length){rows.innerHTML='<tr><td colspan="12" class="empty">No processing batches recorded yet.</td></tr>';return;}
+  rows.innerHTML=processingBatches.map(b=>`<tr><td><b>${escapeProcessingHtml(b.id)}</b></td><td>${escapeProcessingHtml(b.reference||"—")}</td><td>${escapeProcessingHtml(b.startDate||"—")}</td><td>${escapeProcessingHtml(b.readyDate||"—")}</td><td>${formatProcessingNumber(b.freshKg)}</td><td>${formatProcessingNumber(b.shellKg)}</td><td>${formatProcessingNumber(b.copraMadeKg)}</td><td>${formatProcessingNumber(b.copraRemainingKg)}</td><td>${formatProcessingNumber(b.copraUsedKg)}</td><td>${formatProcessingNumber(b.oilLitres)}</td><td>${formatProcessingNumber(b.cakeKg)}</td><td>${escapeProcessingHtml(b.status)}</td></tr>`).join("");
 }
 
 function switchBillingMode(mode){
@@ -2036,7 +2039,11 @@ function calculatePurchaseBalance(){
 function clearPurchaseBill(){purchaseItems=[];document.getElementById('purchaseAmountPaid').value=0;renderPurchaseBill();}
 function savePurchaseBill(){
   if(!purchaseItems.length){alert('Please add at least one raw material to the purchase bill.');return;}
-  alert('Purchase bill '+document.getElementById('purchaseInvoiceNo').textContent+' saved successfully. Total: '+document.getElementById('purchaseGrandTotal').textContent+'.');
+  const fresh=purchaseItems.filter(item=>item.material.toLowerCase().includes('fresh coconut')).reduce((n,item)=>n+item.qty,0);
+  if(fresh){processingStock.freshKg+=fresh;if(!persistProcessing()){processingStock.freshKg-=fresh;return;}renderProductionStock();}
+  const invoice=document.getElementById('purchaseInvoiceNo').textContent,total=document.getElementById('purchaseGrandTotal').textContent;
+  clearPurchaseBill();
+  alert('Purchase bill '+invoice+' saved successfully. Total: '+total+'. Fresh coconut has been added to available stock.');
 }
 function printPurchaseBill(){
   if(!purchaseItems.length){alert('Please add at least one raw material before printing.');return;}
@@ -2099,18 +2106,31 @@ document.addEventListener("DOMContentLoaded", function(){
 </style>
 
 <style id="processing-tracker-layout">
-.processing-kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.processing-kpis .kpi{padding:15px}
-.processing-kpis .kpi h3{font-size:21px}
-.processing-card{margin-top:16px}
-.processing-form{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:13px}
-.processing-balance{margin-top:14px;padding:10px 12px;border-radius:8px;background:#edf5ed;color:#2e7043;font-size:11px;font-weight:700}
-.processing-balance.over{background:#fae5e5;color:#a53d3d}
-.processing-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
-.processing-actions .permission-note{margin:0}
-.processing-card table{min-width:950px}
-@media(max-width:1050px){.processing-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.processing-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){.processing-kpis,.processing-form{grid-template-columns:1fr}.processing-actions{align-items:stretch;flex-direction:column}.processing-actions .btn{width:100%}}
+.stock-overview-card,.processing-card{margin-top:16px}
+.coconut-stock-grid{display:grid;grid-template-columns:repeat(6,minmax(110px,1fr));gap:10px}
+.coconut-stock-item{display:flex;flex-direction:column;gap:9px;padding:14px;border:1px solid #e5eadf;border-radius:10px;background:#fbfcf9}
+.coconut-stock-item span,.processing-overall-grid span{font-size:11px;color:#657366}
+.coconut-stock-item b{font-size:20px;color:#174b32}
+.opening-stock-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #edf0e9;font-size:12px;color:#59665b}
+.opening-stock-row input{max-width:220px;padding:10px;border:1px solid #dfe5dc;border-radius:8px}
+.process-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px;align-items:start}
+.process-step{padding:17px!important;min-width:0}
+.process-step-heading{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.process-step-heading h3{margin:0;color:#184b32;font-size:16px}
+.process-step-heading small{display:block;margin-top:3px;color:#718071;font-size:11px}
+.process-step-number{display:grid;place-items:center;flex:0 0 30px;height:30px;border-radius:50%;background:#e9f2e9;color:#245b3b;font-weight:800}
+.process-step>p{min-height:34px;color:#687568;font-size:12px;line-height:1.5}
+.process-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.process-form-grid .billing-field{min-width:0}
+.process-form-grid label{font-size:10px}
+.process-step-footer{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:14px;padding-top:12px;border-top:1px solid #edf0e9;font-size:11px;color:#657366}
+.process-step-footer .btn{font-size:11px;padding:10px 12px;white-space:normal}
+.processing-overall-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.processing-overall-grid>div{display:flex;flex-direction:column;gap:8px;padding:13px;border-radius:9px;background:#f5f8f2}
+.processing-overall-grid b{font-size:18px;color:#174b32}
+.processing-card table{min-width:1100px}
+@media(max-width:1250px){.process-steps{grid-template-columns:1fr 1fr}.coconut-stock-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.processing-overall-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.process-steps{grid-template-columns:1fr}.coconut-stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.processing-overall-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.opening-stock-row{align-items:stretch;flex-direction:column}.opening-stock-row input{max-width:none}.process-step-footer{align-items:stretch;flex-direction:column}}
 </style>
 
 </body>
