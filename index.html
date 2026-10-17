@@ -1067,6 +1067,7 @@ tbody tr:hover{background:#f8faf4!important}
           <tr><td>CO-003</td><td><b>Coconut Oil (Loose Quantity)</b></td><td>By litre</td><td>Litre</td><td>Set per litre</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-003')">Edit</button></td></tr>
           <tr><td>CC-001</td><td><b>Coconut Cake</b></td><td>By kg</td><td>Kg</td><td>Set per kg</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CC-001')">Edit</button></td></tr>
           <tr><td>CS-001</td><td><b>Coconut Shell</b></td><td>By kg</td><td>Kg</td><td>Set per kg</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CS-001')">Edit</button></td></tr>
+          <tr><td>FC-001</td><td><b>Fresh Coconut</b></td><td>By kg</td><td>Kg</td><td>Set per kg</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','FC-001')">Edit</button></td></tr>
         </tbody></table></div></div>
 
       <div class="page" id="rawmaterials"><div class="toolbar"><h2>Raw Material Master</h2><button class="btn btn-green" onclick="openRecordModal(\'Raw Material\')">+ Add Raw Material</button></div><div class="card"><table><thead><tr><th>Code</th><th>Material</th><th>Unit</th><th>Reorder Level</th><th>Current Stock</th><th>Supplier</th><th>Actions</th></tr></thead><tbody>
@@ -1122,6 +1123,10 @@ tbody tr:hover{background:#f8faf4!important}
             <div class="form-field">
               <label>GSTIN *</label>
               <input id="companyGstin" value="29ABCDE1234F1Z5" placeholder="e.g. 29ABCDE1234F1Z5" maxlength="15">
+            </div>
+            <div class="form-field">
+              <label>FSSAI LICENSE NUMBER</label>
+              <input id="companyFssai" placeholder="Optional FSSAI license number">
             </div>
             <div class="form-field">
               <label>PAN</label>
@@ -1329,7 +1334,7 @@ tbody tr:hover{background:#f8faf4!important}
               </div>
               <div class="billing-field">
                 <label>SALESPERSON</label>
-                <select>
+                <select id="billSalesperson">
                   <option>Admin User</option>
                   <option>Rahul Kumar</option>
                 </select>
@@ -1346,6 +1351,7 @@ tbody tr:hover{background:#f8faf4!important}
                     <option value="Coconut Oil (Loose Quantity)" data-price="" data-unit="Litre">Coconut Oil - Loose Quantity</option>
                     <option value="Coconut Cake" data-price="" data-unit="Kg">Coconut Cake</option>
                     <option value="Coconut Shell" data-price="" data-unit="Kg">Coconut Shell</option>
+                    <option value="Fresh Coconut" data-price="" data-unit="Kg">Fresh Coconut - by kg</option>
                   </select>
                 </div>
                 <div>
@@ -1555,7 +1561,7 @@ const titles={
 
 function getCompany(){
   const defaults={
-    name:"Haritham",gstin:"29ABCDE1234F1Z5",pan:"ABCDE1234F",
+    name:"Haritham",gstin:"29ABCDE1234F1Z5",fssai:"",pan:"ABCDE1234F",
     phone:"9876543210",email:"accounts@harithamoil.com",state:"Karnataka",
     stateCode:"29",invoicePrefix:"INV",address:"Mangaluru, Karnataka, India"
   };
@@ -1566,6 +1572,7 @@ function saveCompanyDetails(){
   const data={
     name:document.getElementById("companyName").value.trim(),
     gstin:document.getElementById("companyGstin").value.trim().toUpperCase(),
+    fssai:document.getElementById("companyFssai").value.trim(),
     pan:document.getElementById("companyPan").value.trim().toUpperCase(),
     phone:document.getElementById("companyPhone").value.trim(),
     email:document.getElementById("companyEmail").value.trim(),
@@ -1582,7 +1589,7 @@ function saveCompanyDetails(){
 }
 function loadCompanyDetails(){
   const c=getCompany();
-  const map={companyName:"name",companyGstin:"gstin",companyPan:"pan",companyPhone:"phone",companyEmail:"email",companyState:"state",companyStateCode:"stateCode",companyInvoicePrefix:"invoicePrefix",companyAddress:"address"};
+  const map={companyName:"name",companyGstin:"gstin",companyFssai:"fssai",companyPan:"pan",companyPhone:"phone",companyEmail:"email",companyState:"state",companyStateCode:"stateCode",companyInvoicePrefix:"invoicePrefix",companyAddress:"address"};
   Object.keys(map).forEach(id=>{const el=document.getElementById(id);if(el)el.value=c[map[id]]||""});
   updateBillingCompany();
 }
@@ -1649,9 +1656,12 @@ function showPage(id,el){
 }
 
 let billItems = [];
+let invoiceSaved=false;
+let savedInvoiceNumber="";
 
 document.addEventListener("DOMContentLoaded", function(){
   loadCompanyDetails();
+  const nextInvoice=localStorage.getItem("cocoNextInvoice");if(nextInvoice)document.getElementById("invoiceNo").textContent=nextInvoice;
   const product = document.getElementById("billProduct");
   if(product) product.addEventListener("change", syncBillProductFields);
   syncBillProductFields();
@@ -1678,6 +1688,7 @@ function syncBillProductFields(){
 }
 
 function addBillItem(){
+  if(invoiceSaved){alert("Clear the saved invoice before starting the next bill.");return;}
   const productEl=document.getElementById("billProduct");
   const selected=productEl.options[productEl.selectedIndex];
   const product=productEl.value;
@@ -1700,11 +1711,13 @@ function addBillItem(){
 }
 
 function removeBillItem(index){
+  if(invoiceSaved){alert("This invoice is already saved. Clear it to start another bill.");return;}
   billItems.splice(index,1);
   renderBill();
 }
 
 function updateBillQty(index,value){
+  if(invoiceSaved){alert("This invoice is already saved. Clear it to start another bill.");return;}
   const unit=billItems[index].unit||"Bottle";
   let qty=Number(value)||0;
   if(qty<=0)qty=unit==="Bottle"?1:0.01;
@@ -1788,6 +1801,8 @@ function updateCustomer(){
 
 function clearBill(){
   billItems=[];
+  invoiceSaved=false;
+  savedInvoiceNumber="";
   document.getElementById("amountReceived").value=0;
   renderBill();
 }
@@ -1797,163 +1812,45 @@ function saveInvoice(){
     alert("Please add at least one product.");
     return;
   }
-  alert("Invoice "+document.getElementById("invoiceNo").textContent+" saved successfully.");
+  if(invoiceSaved){alert("This invoice has already been saved.");return;}
+  const needs={freshKg:0,copraKg:0,cakeKg:0,shellKg:0,oilLitres:0};
+  billItems.forEach(item=>{const qty=Number(item.qty)||0;if(item.product==="Fresh Coconut")needs.freshKg+=qty;else if(item.product==="Coconut Cake")needs.cakeKg+=qty;else if(item.product==="Coconut Shell")needs.shellKg+=qty;else if(item.product.includes("Coconut Oil"))needs.oilLitres+=qty*(item.unit==="Bottle"?(item.product.includes("Half")?0.5:1):1);});
+  for(const [key,label] of [["freshKg","Fresh coconut"],["cakeKg","Coconut cake"],["shellKg","Coconut shell"],["oilLitres","Coconut oil"]])if(needs[key]>(Number(processingStock[key])||0)+0.001){alert(`${label} stock is insufficient. Available: ${formatProcessingNumber(processingStock[key])} ${key==="oilLitres"?"L":"kg"}.`);return;}
+  const before={...processingStock};Object.keys(needs).forEach(key=>processingStock[key]-=needs[key]);
+  if(!persistProcessing()){processingStock=before;return;}
+  renderProductionStock();invoiceSaved=true;savedInvoiceNumber=document.getElementById("invoiceNo").textContent;
+  const current=savedInvoiceNumber.match(/^(.*?)(\d+)$/);if(current){document.getElementById("invoiceNo").textContent=current[1]+String(Number(current[2])+1).padStart(current[2].length,"0");localStorage.setItem("cocoNextInvoice",document.getElementById("invoiceNo").textContent);}
+  alert("Invoice "+savedInvoiceNumber+" saved successfully. Stock balances have been updated.");
 }
 
 function printInvoice(){
-  if(!billItems.length){
-    alert("Please add at least one product before printing.");
-    return;
-  }
-  const customer=document.getElementById("billCustomer").value;
-  const invoice=document.getElementById("invoiceNo").textContent;
-  const date=document.getElementById("billDate").value;
-  const total=document.getElementById("billGrandTotal").textContent;
-
-  let rows="";
-  billItems.forEach((item,i)=>{
-    const taxable=item.price*item.qty-Math.min(item.discount,item.price*item.qty);
-    const unit=item.unit||"Bottle";
-    const qtyUnit=unit==="Bottle"?"Nos":unit;
-    rows+=`<tr><td>${i+1}</td><td>${item.product}</td><td>${item.qty} ${qtyUnit}</td><td>${money(item.price)} / ${unit}</td><td>${money(taxable+taxable*.05)}</td></tr>`;
-  });
-
-  const w=window.open("","_blank","width=850,height=700");
-  w.document.write(`
-  <!doctype html><html><head><title>${invoice}</title>
-  <style>
-  body{font-family:Arial;padding:35px;color:#24352B}h1{color:#174A2E;margin:0}
-  .head{display:flex;justify-content:space-between;border-bottom:2px solid #174A2E;padding-bottom:18px}
-  .gold{color:#D9A441}.info{margin:22px 0;display:flex;justify-content:space-between}
-  table{width:100%;border-collapse:collapse}th{background:#174A2E;color:white;text-align:left;padding:10px;font-size:12px}
-  td{padding:10px;border-bottom:1px solid #ddd;font-size:12px}.total{margin-left:auto;width:280px;margin-top:20px}
-  .row{display:flex;justify-content:space-between;padding:7px}.grand{font-size:20px;font-weight:bold;border-top:2px solid #174A2E;padding-top:12px}
-  </style><style>
-
-/* 100% browser zoom desktop POS fit: compact vertical rhythm without hiding billing fields */
-@media screen and (min-width: 1200px) and (min-height: 700px) {
-  .page#billing.active { padding-top: 8px !important; }
-  .page#billing.active .toolbar { margin-bottom: 12px !important; min-height: 38px !important; }
-  .page#billing.active .toolbar h2 { font-size: 20px !important; line-height: 1.2 !important; }
-  .page#billing.active .toolbar .btn { padding: 9px 14px !important; min-height: 38px !important; font-size: 11px !important; }
-  .page#billing.active .billing-layout {
-    grid-template-columns: minmax(0, 1.72fr) minmax(300px, .72fr) !important;
-    gap: 12px !important;
-    align-items: start !important;
-  }
-  .page#billing.active .billing-left,
-  .page#billing.active .billing-right { padding: 16px !important; }
-  .page#billing.active .billing-head { margin-bottom: 12px !important; }
-  .page#billing.active .billing-head h3,
-  .page#billing.active .billing-right > h3 { font-size: 16px !important; line-height: 1.2 !important; margin-bottom: 8px !important; }
-  .page#billing.active .invoice-chip { padding: 8px 10px !important; font-size: 11px !important; }
-  .page#billing.active .billing-fields {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 9px !important; margin-bottom: 12px !important;
-  }
-  .page#billing.active .billing-field label,
-  .page#billing.active .add-item-grid label,
-  .page#billing.active .payment-box label { display:block; font-size: 10px !important; margin-bottom: 5px !important; line-height: 1.1 !important; }
-  .page#billing.active .billing-field input,
-  .page#billing.active .billing-field select { height: 36px !important; padding: 0 9px !important; font-size: 11px !important; }
-  .page#billing.active .add-item-box { padding: 10px !important; margin-bottom: 12px !important; }
-  .page#billing.active .add-item-grid { gap: 8px !important; }
-  .page#billing.active .add-item-grid select,
-  .page#billing.active .add-item-grid input,
-  .page#billing.active .add-item-btn { height: 36px !important; padding: 0 9px !important; font-size: 11px !important; }
-  .page#billing.active .bill-table th { padding: 10px 8px !important; font-size: 9px !important; }
-  .page#billing.active .bill-table td { padding: 8px !important; font-size: 10px !important; }
-  .page#billing.active .table-wrap { max-height: 100px !important; overflow: auto !important; }
-  .page#billing.active .billing-actions { margin-top: 10px !important; padding-top: 10px !important; }
-  .page#billing.active .billing-actions button { min-height: 36px !important; padding: 8px 12px !important; font-size: 11px !important; }
-  .page#billing.active .billing-right .permission-note { font-size: 11px !important; }
-  .page#billing.active .customer-summary { padding: 10px 12px !important; margin: 8px 0 10px !important; font-size: 11px !important; }
-  .page#billing.active .summary-row { padding: 6px 0 !important; font-size: 11px !important; }
-  .page#billing.active .summary-row.total { margin-top: 5px !important; padding: 9px 0 !important; }
-  .page#billing.active .summary-row.total span,
-  .page#billing.active .summary-row.total b { font-size: 16px !important; }
-  .page#billing.active .payment-box { margin-top: 10px !important; padding-top: 9px !important; }
-  .page#billing.active .payment-box select,
-  .page#billing.active .payment-box input { height: 34px !important; min-height: 34px !important; padding: 0 9px !important; font-size: 11px !important; margin-bottom: 8px !important; }
-  .page#billing.active .payment-buttons { gap: 8px !important; margin-top: 8px !important; }
-  .page#billing.active .payment-buttons button { height: 34px !important; min-height: 34px !important; padding: 7px 8px !important; font-size: 10px !important; }
-  .page#billing.active .bill-note { margin-top: 7px !important; font-size: 9px !important; line-height: 1.35 !important; }
-}
-
-/* Billing viewport-fit correction: keep payment controls visible at 100% zoom */
-#billing .billing-layout, .page#billing .billing-layout { align-items:start; gap:14px; }
-#billing .billing-right, .page#billing .billing-right {
-  padding:14px 16px !important;
-}
-#billing .billing-right h3, .page#billing .billing-right h3 {
-  margin:0 0 8px !important; font-size:17px !important; line-height:1.2 !important;
-}
-#billing .billing-right #billingCompanyGstin, .page#billing .billing-right #billingCompanyGstin {
-  margin:0 0 5px !important; font-size:11px !important; line-height:1.2 !important;
-}
-#billing .customer-summary, .page#billing .customer-summary {
-  padding:8px 10px !important; margin:0 0 8px !important; line-height:1.25 !important;
-}
-#billing .customer-summary b, .page#billing .customer-summary b { font-size:12px !important; }
-#billing .summary-row, .page#billing .summary-row {
-  padding:5px 0 !important; font-size:11px !important; line-height:1.2 !important;
-}
-#billing .summary-row.total, .page#billing .summary-row.total {
-  margin-top:4px !important; padding:8px 0 7px !important; font-size:16px !important;
-}
-#billing .payment-box, .page#billing .payment-box {
-  padding-top:8px !important; margin-top:6px !important;
-}
-#billing .payment-box label, .page#billing .payment-box label {
-  margin-bottom:3px !important; font-size:9px !important; line-height:1.15 !important;
-}
-#billing .payment-box select, #billing .payment-box input,
-.page#billing .payment-box select, .page#billing .payment-box input {
-  height:32px !important; margin-bottom:6px !important; padding:0 8px !important; font-size:11px !important;
-}
-#billing .payment-buttons, .page#billing .payment-buttons { gap:6px !important; margin-top:4px !important; }
-#billing .payment-buttons button, .page#billing .payment-buttons button { height:34px !important; font-size:10px !important; }
-#billing .bill-note, .page#billing .bill-note { margin-top:5px !important; font-size:8px !important; line-height:1.25 !important; }
-@media (min-width: 1100px) and (min-height: 700px) {
-  #billing .billing-layout, .page#billing .billing-layout { grid-template-columns:minmax(0,1.6fr) minmax(320px,.72fr) !important; }
-}
-
-</style>
-
-<style id="billing-heading-padding-final-fix">
-/* Remove the duplicate page heading inside Billing; keep the main header title. */
-#billing.active > .toolbar > h2 { display: none !important; }
-#billing.active > .toolbar { margin: 0 0 10px !important; min-height: 0 !important; padding: 0 !important; }
-#billing.active { padding-top: 10px !important; }
-#billing.active .billing-layout { margin-top: 0 !important; gap: 12px !important; }
-#billing.active .billing-left, #billing.active .billing-right { padding: 14px !important; }
-#billing.active .billing-head { margin-bottom: 12px !important; }
-#billing.active .billing-fields { margin-bottom: 12px !important; gap: 10px !important; }
-#billing.active .add-item-box { margin-bottom: 12px !important; padding: 10px !important; }
-</style>
-
-</head><body>
-  <div class="head"><div><h1>🥥 ${getCompany().name}</h1><div>${getCompany().address}<br>GSTIN: <b>${getCompany().gstin}</b> | Phone: ${getCompany().phone}</div></div><div><b>${invoice}</b><br>${date}</div></div>
-  <div class="info"><div><b>Bill To:</b><br>${customer}<br>${document.getElementById("billPhone").value||""}</div><div><b>Payment:</b><br>${document.getElementById("paymentMode").value}</div></div>
-  <table><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>
-  <div class="total"><div class="row"><span>Subtotal</span><b>${document.getElementById("billSubtotal").textContent}</b></div>
-  <div class="row"><span>Discount</span><b>${document.getElementById("billDiscountTotal").textContent}</b></div>
-  <div class="row"><span>GST 5%</span><b>${document.getElementById("billTax").textContent}</b></div>
-  <div class="row grand"><span>Grand Total</span><span>${total}</span></div></div>
-  <p style="text-align:center;margin-top:50px;font-size:11px">Thank you for choosing Haritham Pure Coconut Oil.</p>
-  <script>window.onload=function(){window.print()}<\/script>
-  
-<style id="restore-billing-100-percent">
-/* Restore normal 100% sizing for the billing page; no page-specific zoom. */
-#app { zoom: 1 !important; width: 100% !important; min-height: 100% !important; }
-.page#billing.active { zoom: 1 !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
-@media (min-width: 769px) { .page#billing.active { transform: none !important; } }
-</style>
-
-</body></html>`);
+  if(!billItems.length){alert("Please add at least one product before printing.");return;}
+  const c=getCompany(),customer=document.getElementById("billCustomer").value;
+  const invoice=savedInvoiceNumber||document.getElementById("invoiceNo").textContent;
+  const dateValue=document.getElementById("billDate").value,date=dateValue?new Date(`${dateValue}T00:00:00`).toLocaleDateString("en-GB"):"",time=new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true});
+  const seller=document.getElementById("billSalesperson")?.value||"Admin User",mode=document.getElementById("paymentMode").value,received=Number(document.getElementById("amountReceived").value)||0;
+  let taxableTotal=0,totalQty=0;
+  const rows=billItems.map((item,i)=>{const gross=item.price*item.qty,discount=Math.min(item.discount,gross),taxable=gross-discount;taxableTotal+=taxable;totalQty+=item.qty;const unit=item.unit||"Bottle",qtyUnit=unit==="Bottle"?"Nos":unit,hsn=item.product.includes("Coconut Oil")?"15131100":"";return `<tr><td class="sl">${i+1}</td><td class="desc">${escapeProcessingHtml(item.product)}${hsn?`<small>${hsn}</small>`:""}${discount?"<small>Discount</small>":""}</td><td class="qty">${Number(item.qty).toFixed(2)} ${qtyUnit}</td><td class="rate">${money(item.price)}</td><td class="amt">${money(gross)}${discount?`<small>(-)${money(discount)}</small>`:""}</td></tr>`;}).join("");
+  const tax=taxableTotal*.05,cgst=tax/2,sgst=tax/2,rawTotal=taxableTotal+tax,roundedTotal=Math.round(rawTotal),roundOff=roundedTotal-rawTotal;
+  const totalUnit=billItems.every(i=>(i.unit||"Bottle")===(billItems[0].unit||"Bottle"))?((billItems[0].unit||"Bottle")==="Bottle"?"Nos":billItems[0].unit):"items";
+  const cashLabel=mode==="Credit"?"TAX INVOICE - CREDIT":"TAX INVOICE - CASH";
+  const w=window.open("","_blank","width=420,height=800");if(!w){alert("Allow pop-ups to print the bill.");return;}
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeProcessingHtml(invoice)}</title><style>
+    @page{size:80mm;margin:3mm}*{box-sizing:border-box}body{width:74mm;margin:0 auto;color:#111;font:10px/1.25 Arial,sans-serif}
+    .center{text-align:center}.brand{font-weight:800;font-size:17px;margin:0 0 2px}.invoice-title{font-size:13px;font-weight:700;margin:6px 0}.sub{font-size:9px}.rule{border:0;border-top:1px dashed #333;margin:5px 0}
+    .meta{display:grid;grid-template-columns:1fr 1fr;gap:2px 5px}.right{text-align:right}table{width:100%;border-collapse:collapse;margin-top:5px}th{font-size:8px;text-align:left;border-bottom:1px solid #111;padding:3px 1px}td{vertical-align:top;padding:3px 1px}
+    .sl{width:5%}.desc{width:34%}.qty{width:18%;white-space:nowrap}.rate{width:17%;text-align:right;white-space:nowrap}.amt{width:26%;text-align:right;white-space:nowrap}td small{display:block;font-size:8px;padding-top:2px}
+    .money-row{display:grid;grid-template-columns:1fr auto;gap:6px;padding:2px 1px}.money-row.total{border-top:1px solid #111;margin-top:2px;padding-top:4px;font-weight:bold}.money-row.total strong{font-size:11px}.tax-head,.tax-line{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:3px;padding:2px 1px}.tax-head{font-weight:bold;border-bottom:1px solid #aaa}.tax-line span:nth-child(n+2){text-align:right}.payment{display:grid;grid-template-columns:1fr auto;gap:2px 6px}.payment span:nth-child(even){text-align:right}.footer{margin-top:9px;text-align:center;font-size:9px}
+    @media print{body{width:74mm}}
+  </style></head><body>
+    <header class="center"><h1 class="brand">${escapeProcessingHtml(c.name)} OIL MILL</h1><div>${escapeProcessingHtml(c.address||"")}</div>${c.fssai?`<div>FSSAI License No: ${escapeProcessingHtml(c.fssai)}</div>`:""}<div>GSTIN: ${escapeProcessingHtml(c.gstin)} · State: ${escapeProcessingHtml(c.state)}, Code: ${escapeProcessingHtml(c.stateCode)}</div><div>Contact: ${escapeProcessingHtml(c.phone)} · E-Mail: ${escapeProcessingHtml(c.email)}</div><div class="invoice-title">${cashLabel}</div></header>
+    <hr class="rule"><div class="meta"><span>Bill No: <b>${escapeProcessingHtml(invoice)}</b></span><span class="right">Time: ${time}</span><span>Date: ${escapeProcessingHtml(date)}</span><span class="right">User: ${escapeProcessingHtml(seller)}</span><span>Customer: ${escapeProcessingHtml(customer)}</span><span class="right">${escapeProcessingHtml(document.getElementById("billPhone").value||"")}</span></div>
+    <table><thead><tr><th colspan="2">Sl Description · HSN/SAC</th><th>Qty</th><th class="rate">Rate</th><th class="amt">Amount</th></tr></thead><tbody>${rows}</tbody></table>
+    <hr class="rule"><div class="money-row"><span>Taxable Amount</span><span>${money(taxableTotal)}</span></div><div class="tax-head"><span>Tax Details</span><span>Rate</span><span>Amount</span></div><div class="tax-line"><span>CGST</span><span>2.50%</span><span>${money(cgst)}</span></div><div class="tax-line"><span>SGST/UTGST</span><span>2.50%</span><span>${money(sgst)}</span></div>
+    <div class="money-row"><span>Round Off</span><span>${roundOff<0?"(-)":""}${money(Math.abs(roundOff))}</span></div><div class="money-row total"><span>Total ${totalQty.toFixed(2)} ${totalUnit}</span><strong>₹ ${money(roundedTotal).replace("₹","")}</strong></div>
+    <hr class="rule"><div class="payment"><span>${escapeProcessingHtml(mode)}</span><span>${money(received)}</span><span>Balance</span><span>${money(Math.max(0,roundedTotal-received))}</span><span>Total Paid</span><b>${money(Math.min(received,roundedTotal))}</b></div><hr class="rule"><div class="footer">Thank you · Visit again</div><script>window.onload=function(){window.print()}<\/script></body></html>`);
   w.document.close();
 }
-
 
 let purchaseItems=[];
 let processingBatches=[];
