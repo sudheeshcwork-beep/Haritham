@@ -1062,9 +1062,11 @@ tbody tr:hover{background:#f8faf4!important}
       <!-- MASTER PAGES -->
       <div class="page" id="products"><div class="toolbar"><h2>Product Master</h2><div class="filters"><input class="search" placeholder="Search products"><button class="btn btn-green" onclick="openRecordModal(\'Product\')">+ Add Product</button></div></div>
         <div class="card"><table><thead><tr><th>Code</th><th>Product</th><th>Pack Size</th><th>Unit</th><th>Sale Price</th><th>Tax</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-          <tr><td>CO-001</td><td><b>Coconut Oil</b></td><td>1 Litre</td><td>Bottle</td><td>₹299</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-001')">Edit</button></td></tr>
-          <tr><td>CO-002</td><td><b>Coconut Oil</b></td><td>500 ml</td><td>Bottle</td><td>₹159</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-002')">Edit</button></td></tr>
-          <tr><td>CO-003</td><td><b>Coconut Oil</b></td><td>200 ml</td><td>Packet</td><td>₹72</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-003')">Edit</button></td></tr>
+          <tr><td>CO-001</td><td><b>Coconut Oil 1 Litre</b></td><td>1 Litre</td><td>Bottle</td><td>₹299</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-001')">Edit</button></td></tr>
+          <tr><td>CO-002</td><td><b>Coconut Oil Half Litre</b></td><td>500 ml</td><td>Bottle</td><td>₹159</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-002')">Edit</button></td></tr>
+          <tr><td>CO-003</td><td><b>Coconut Oil (Loose Quantity)</b></td><td>By litre</td><td>Litre</td><td>Set per litre</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CO-003')">Edit</button></td></tr>
+          <tr><td>CC-001</td><td><b>Coconut Cake</b></td><td>By kg</td><td>Kg</td><td>Set per kg</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CC-001')">Edit</button></td></tr>
+          <tr><td>CS-001</td><td><b>Coconut Shell</b></td><td>By kg</td><td>Kg</td><td>Set per kg</td><td>5%</td><td><span class="status green">ACTIVE</span></td><td class="master-actions"><button class="edit-btn" onclick="editMaster('Product','CS-001')">Edit</button></td></tr>
         </tbody></table></div></div>
 
       <div class="page" id="rawmaterials"><div class="toolbar"><h2>Raw Material Master</h2><button class="btn btn-green" onclick="openRecordModal(\'Raw Material\')">+ Add Raw Material</button></div><div class="card"><table><thead><tr><th>Code</th><th>Material</th><th>Unit</th><th>Reorder Level</th><th>Current Stock</th><th>Supplier</th><th>Actions</th></tr></thead><tbody>
@@ -1173,13 +1175,31 @@ tbody tr:hover{background:#f8faf4!important}
         <tr><td><b>OP-1023</b></td><td>04-10-2026</td><td>Print House</td><td>Labels</td><td>5,000 Nos</td><td class="amount">₹7,800</td><td><span class="status yellow">CREDIT</span></td></tr>
       </tbody></table></div></div>
 
-      <div class="page" id="production"><div class="toolbar"><h2>Oil Production</h2><button class="btn btn-green">+ Create Production Batch</button></div>
-        <div class="kpi-grid"><div class="kpi"><small>TODAY</small><h3>420 L</h3><p>Oil produced today</p></div><div class="kpi"><small>THIS MONTH</small><h3>2,480 L</h3><p>Total production</p></div><div class="kpi"><small>RECOVERY</small><h3>18.4%</h3><p>Average oil recovery</p></div></div>
-        <div class="card" style="margin-top:18px"><div class="card-title"><h3>Production Batches</h3><span>Track raw material → oil → packing</span></div><table><thead><tr><th>Batch</th><th>Date</th><th>Raw Coconut</th><th>Oil Produced</th><th>Recovery</th><th>By-product</th><th>Status</th></tr></thead><tbody>
-          <tr><td><b>CP-261007</b></td><td>07-10-2026</td><td>2,280 Kg</td><td>420 L</td><td>18.42%</td><td>1,620 Kg</td><td><span class="status blue">READY</span></td></tr>
-          <tr><td><b>CP-261006</b></td><td>06-10-2026</td><td>2,050 Kg</td><td>386 L</td><td>18.83%</td><td>1,450 Kg</td><td><span class="status green">COMPLETED</span></td></tr>
-          <tr><td><b>CP-261005</b></td><td>05-10-2026</td><td>2,200 Kg</td><td>402 L</td><td>18.27%</td><td>1,550 Kg</td><td><span class="status green">COMPLETED</span></td></tr>
-        </tbody></table></div>
+      <div class="page" id="production">
+        <div class="toolbar"><h2>Coconut Processing &amp; Oil Production</h2></div>
+        <div class="kpi-grid processing-kpis">
+          <div class="kpi"><small>COCONUT PROCESSED</small><h3 id="processingTotalCoconut">0 kg</h3><p>Whole coconut input</p></div>
+          <div class="kpi"><small>SHELL SEPARATED</small><h3 id="processingTotalShell">0 kg</h3><p>Shell recovered</p></div>
+          <div class="kpi"><small>WHITE FLESH RECOVERED</small><h3 id="processingTotalFlesh">0 kg</h3><p>White coconut flesh</p></div>
+          <div class="kpi"><small>COCONUT OIL MADE</small><h3 id="processingTotalOil">0 L</h3><p>Oil produced</p></div>
+        </div>
+        <div class="card processing-card">
+          <div class="card-title"><h3>Record a Processing Batch</h3><span>Enter weights in kg and oil output in litres</span></div>
+          <div class="processing-form">
+            <div class="billing-field"><label for="processingDate">PROCESSING DATE</label><input id="processingDate" type="date"></div>
+            <div class="billing-field"><label for="processingPurchaseRef">PURCHASE / LOT REFERENCE</label><input id="processingPurchaseRef" placeholder="Optional purchase reference"></div>
+            <div class="billing-field"><label for="processingCoconutKg">WHOLE COCONUT PROCESSED (KG)</label><input id="processingCoconutKg" type="number" min="0.01" step="0.01" placeholder="e.g. 250"></div>
+            <div class="billing-field"><label for="processingShellKg">SHELL SEPARATED (KG)</label><input id="processingShellKg" type="number" min="0" step="0.01" value="0"></div>
+            <div class="billing-field"><label for="processingFleshKg">WHITE FLESH RECOVERED (KG)</label><input id="processingFleshKg" type="number" min="0" step="0.01" value="0"></div>
+            <div class="billing-field"><label for="processingOilLitres">COCONUT OIL PRODUCED (LITRES)</label><input id="processingOilLitres" type="number" min="0" step="0.01" value="0"></div>
+            <div class="billing-field"><label for="processingCakeKg">COCONUT CAKE PRODUCED (KG)</label><input id="processingCakeKg" type="number" min="0" step="0.01" value="0"></div>
+          </div>
+          <div id="processingBalance" class="processing-balance">Unaccounted weight / moisture loss: 0 kg</div>
+          <div class="processing-actions"><span class="permission-note">Batch records are saved in this browser on this device.</span><button class="btn btn-green" type="button" onclick="saveProcessingBatch()">+ Save Processing Batch</button></div>
+        </div>
+        <div class="card processing-card"><div class="card-title"><h3>Processing Batch History</h3><span>Shell, flesh, oil and cake outputs by batch</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Batch</th><th>Date</th><th>Purchase / Lot Ref</th><th>Coconut In (kg)</th><th>Shell (kg)</th><th>White Flesh (kg)</th><th>Oil (L)</th><th>Cake (kg)</th><th>Other Loss (kg)</th></tr></thead><tbody id="processingBatchRows"><tr><td colspan="9" class="empty">No processing batches recorded yet.</td></tr></tbody></table></div>
+        </div>
       </div>
 
       <div class="page" id="stockIn"><div class="toolbar"><h2>Stock In</h2><button class="btn btn-green">+ Stock Receipt</button></div><div class="card"><table><thead><tr><th>Receipt</th><th>Date</th><th>Item</th><th>Type</th><th>Qty</th><th>Reference</th><th>Status</th></tr></thead><tbody>
@@ -1189,7 +1209,7 @@ tbody tr:hover{background:#f8faf4!important}
 
       <div class="page" id="sales"><div class="toolbar"><h2>Sales / Billing</h2><div class="filters"><input class="search" placeholder="Search invoice/customer"><button class="btn btn-gold">🖨 Print</button><button class="btn btn-green">+ New Invoice</button></div></div>
         <div class="kpi-grid"><div class="kpi"><small>TODAY</small><h3>₹48,650</h3><p>23 invoices</p></div><div class="kpi"><small>MONTH</small><h3>₹8.42 L</h3><p>386 invoices</p></div><div class="kpi"><small>CREDIT SALES</small><h3>₹1.26 L</h3><p>14 pending invoices</p></div></div>
-        <div class="card" style="margin-top:18px"><div class="card-title"><h3>Sales Invoices</h3><span>Products: 1L / 500ml / Packets</span></div><table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Items</th><th>Subtotal</th><th>Payment</th><th>Total</th></tr></thead><tbody>
+        <div class="card" style="margin-top:18px"><div class="card-title"><h3>Sales Invoices</h3><span>Products: 1 L / 500 ml / loose oil / cake / shell</span></div><table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Items</th><th>Subtotal</th><th>Payment</th><th>Total</th></tr></thead><tbody>
           <tr><td><b>INV-1058</b></td><td>07-10-2026</td><td>Fresh Mart</td><td>1L × 20</td><td>₹5,980</td><td><span class="status green">UPI</span></td><td class="amount">₹5,980</td></tr>
           <tr><td><b>INV-1057</b></td><td>07-10-2026</td><td>Krishna Stores</td><td>500ml × 30</td><td>₹4,770</td><td><span class="status yellow">CREDIT</span></td><td class="amount">₹4,770</td></tr>
           <tr><td><b>INV-1056</b></td><td>07-10-2026</td><td>Home Needs</td><td>1L × 12</td><td>₹3,588</td><td><span class="status green">CASH</span></td><td class="amount">₹3,588</td></tr>
@@ -1279,18 +1299,20 @@ tbody tr:hover{background:#f8faf4!important}
                 <div class="product-field">
                   <label>PRODUCT</label>
                   <select id="billProduct">
-                    <option value="Coconut Oil 1 Litre" data-price="299">Coconut Oil - 1 Litre</option>
-                    <option value="Coconut Oil 500 ml" data-price="159">Coconut Oil - 500 ml</option>
-                    <option value="Coconut Oil Packet" data-price="72">Coconut Oil - Packet</option>
+                    <option value="Coconut Oil 1 Litre" data-price="299" data-unit="Bottle">Coconut Oil - 1 Litre</option>
+                    <option value="Coconut Oil Half Litre" data-price="159" data-unit="Bottle">Coconut Oil - Half Litre</option>
+                    <option value="Coconut Oil (Loose Quantity)" data-price="" data-unit="Litre">Coconut Oil - Loose Quantity</option>
+                    <option value="Coconut Cake" data-price="" data-unit="Kg">Coconut Cake</option>
+                    <option value="Coconut Shell" data-price="" data-unit="Kg">Coconut Shell</option>
                   </select>
                 </div>
                 <div>
-                  <label>PRICE</label>
-                  <input id="billPrice" type="number" value="299" min="0">
+                  <label id="billPriceLabel">PRICE / BOTTLE</label>
+                  <input id="billPrice" type="number" value="299" min="0" step="0.01" placeholder="Enter rate">
                 </div>
                 <div>
-                  <label>QTY</label>
-                  <input id="billQty" type="number" value="1" min="1">
+                  <label id="billQtyLabel">QUANTITY (NOS)</label>
+                  <input id="billQty" type="number" value="1" min="1" step="1">
                 </div>
                 <div>
                   <label>DISCOUNT</label>
@@ -1589,12 +1611,9 @@ let billItems = [];
 document.addEventListener("DOMContentLoaded", function(){
   loadCompanyDetails();
   const product = document.getElementById("billProduct");
-  if(product){
-    product.addEventListener("change", function(){
-      const selected = this.options[this.selectedIndex];
-      document.getElementById("billPrice").value = selected.dataset.price || 0;
-    });
-  }
+  if(product) product.addEventListener("change", syncBillProductFields);
+  syncBillProductFields();
+  initProcessingTracker();
   renderBill();
 });
 
@@ -1602,16 +1621,36 @@ function money(n){
   return "₹" + Number(n || 0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
+function syncBillProductFields(){
+  const product=document.getElementById("billProduct");
+  if(!product)return;
+  const selected=product.options[product.selectedIndex];
+  const unit=selected.dataset.unit||"Bottle";
+  document.getElementById("billPrice").value=selected.dataset.price||"";
+  document.getElementById("billPriceLabel").textContent=unit==="Litre"?"PRICE / LITRE":unit==="Kg"?"PRICE / KG":"PRICE / BOTTLE";
+  document.getElementById("billQtyLabel").textContent=unit==="Litre"?"QUANTITY (LITRES)":unit==="Kg"?"QUANTITY (KG)":"QUANTITY (NOS)";
+  const qty=document.getElementById("billQty");
+  qty.min=unit==="Bottle"?"1":"0.01";
+  qty.step=unit==="Bottle"?"1":"0.01";
+  qty.value="1";
+}
+
 function addBillItem(){
   const productEl=document.getElementById("billProduct");
+  const selected=productEl.options[productEl.selectedIndex];
   const product=productEl.value;
+  const unit=selected.dataset.unit||"Bottle";
   const price=Number(document.getElementById("billPrice").value)||0;
-  const qty=Math.max(1,Number(document.getElementById("billQty").value)||1);
+  let qty=Number(document.getElementById("billQty").value)||0;
   const discount=Math.max(0,Number(document.getElementById("billDiscount").value)||0);
+  if(price<=0){alert("Enter a sale rate for this product before adding it to the bill.");document.getElementById("billPrice").focus();return;}
+  if(qty<=0){alert("Enter a quantity greater than zero.");document.getElementById("billQty").focus();return;}
+  if(unit==="Bottle")qty=Math.max(1,Math.round(qty));
+  const lineUnit=unit==="Bottle"?"Bottle":unit;
 
-  const existing=billItems.find(x=>x.product===product && x.price===price && x.discount===discount);
+  const existing=billItems.find(x=>x.product===product && x.price===price && x.discount===discount && x.unit===lineUnit);
   if(existing){existing.qty+=qty;}
-  else{billItems.push({product,price,qty,discount});}
+  else{billItems.push({product,price,qty,discount,unit:lineUnit});}
 
   document.getElementById("billQty").value=1;
   document.getElementById("billDiscount").value=0;
@@ -1624,7 +1663,11 @@ function removeBillItem(index){
 }
 
 function updateBillQty(index,value){
-  billItems[index].qty=Math.max(1,Number(value)||1);
+  const unit=billItems[index].unit||"Bottle";
+  let qty=Number(value)||0;
+  if(qty<=0)qty=unit==="Bottle"?1:0.01;
+  if(unit==="Bottle")qty=Math.max(1,Math.round(qty));
+  billItems[index].qty=qty;
   renderBill();
 }
 
@@ -1638,12 +1681,16 @@ function renderBill(){
     const taxable=gross-discount;
     const tax=taxable*.05;
     const total=taxable+tax;
+    const unit=item.unit||"Bottle";
+    const qtyUnit=unit==="Bottle"?"Nos":unit;
+    const qtyStep=unit==="Bottle"?"1":"0.01";
+    const qtyMin=unit==="Bottle"?"1":"0.01";
     tbody.innerHTML += `
       <tr>
         <td>${i+1}</td>
         <td><b>${item.product}</b></td>
-        <td>${money(item.price)}</td>
-        <td><input class="qty-input" type="number" min="1" value="${item.qty}" onchange="updateBillQty(${i},this.value)"></td>
+        <td>${money(item.price)} / ${unit}</td>
+        <td><input class="qty-input" type="number" min="${qtyMin}" step="${qtyStep}" value="${item.qty}" onchange="updateBillQty(${i},this.value)"> ${qtyUnit}</td>
         <td>${money(discount)}</td>
         <td>${money(taxable)}</td>
         <td class="amount">${money(total)}</td>
@@ -1724,7 +1771,9 @@ function printInvoice(){
   let rows="";
   billItems.forEach((item,i)=>{
     const taxable=item.price*item.qty-Math.min(item.discount,item.price*item.qty);
-    rows+=`<tr><td>${i+1}</td><td>${item.product}</td><td>${item.qty}</td><td>${money(item.price)}</td><td>${money(taxable+taxable*.05)}</td></tr>`;
+    const unit=item.unit||"Bottle";
+    const qtyUnit=unit==="Bottle"?"Nos":unit;
+    rows+=`<tr><td>${i+1}</td><td>${item.product}</td><td>${item.qty} ${qtyUnit}</td><td>${money(item.price)} / ${unit}</td><td>${money(taxable+taxable*.05)}</td></tr>`;
   });
 
   const w=window.open("","_blank","width=850,height=700");
@@ -1865,6 +1914,84 @@ function printInvoice(){
 
 
 let purchaseItems=[];
+let processingBatches=[];
+function localISODate(){
+  const now=new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+}
+function processingNumber(id){return Math.max(0,Number(document.getElementById(id)?.value)||0);}
+function formatProcessingNumber(value){return Number(value||0).toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:2});}
+function escapeProcessingHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));}
+function initProcessingTracker(){
+  try{
+    const stored=JSON.parse(localStorage.getItem("cocoProcessingBatches")||"[]");
+    processingBatches=Array.isArray(stored)?stored:[];
+  }catch(error){processingBatches=[];}
+  const date=document.getElementById("processingDate");
+  if(date&&!date.value)date.value=localISODate();
+  ["processingCoconutKg","processingShellKg","processingFleshKg"].forEach(id=>{
+    const input=document.getElementById(id);if(input)input.addEventListener("input",updateProcessingBalance);
+  });
+  updateProcessingBalance();
+  renderProcessingBatches();
+}
+function updateProcessingBalance(){
+  const raw=processingNumber("processingCoconutKg");
+  const shell=processingNumber("processingShellKg");
+  const flesh=processingNumber("processingFleshKg");
+  const difference=raw-shell-flesh;
+  const label=document.getElementById("processingBalance");
+  if(!label)return;
+  if(difference < -0.005){
+    label.textContent=`Shell and white flesh exceed the coconut input by ${formatProcessingNumber(Math.abs(difference))} kg.`;
+    label.classList.add("over");
+  }else{
+    label.textContent=`Unaccounted weight / moisture loss: ${formatProcessingNumber(Math.max(0,difference))} kg`;
+    label.classList.remove("over");
+  }
+}
+function saveProcessingBatch(){
+  const raw=processingNumber("processingCoconutKg");
+  const shell=processingNumber("processingShellKg");
+  const flesh=processingNumber("processingFleshKg");
+  const oil=processingNumber("processingOilLitres");
+  const cake=processingNumber("processingCakeKg");
+  if(raw<=0){alert("Enter the whole coconut quantity processed in kg.");document.getElementById("processingCoconutKg").focus();return;}
+  if(shell+flesh>raw+0.005){alert("Shell and white flesh cannot total more than the whole coconut input.");return;}
+  const date=document.getElementById("processingDate").value||localISODate();
+  const batch={
+    id:`PB-${Date.now()}`,
+    date,
+    reference:document.getElementById("processingPurchaseRef").value.trim(),
+    coconutKg:raw,
+    shellKg:shell,
+    fleshKg:flesh,
+    oilLitres:oil,
+    cakeKg:cake
+  };
+  processingBatches.unshift(batch);
+  try{localStorage.setItem("cocoProcessingBatches",JSON.stringify(processingBatches));}
+  catch(error){processingBatches.shift();alert("This browser could not save the batch. Check available browser storage and try again.");return;}
+  ["processingCoconutKg","processingShellKg","processingFleshKg","processingOilLitres","processingCakeKg","processingPurchaseRef"].forEach(id=>{document.getElementById(id).value=id==="processingShellKg"||id==="processingFleshKg"||id==="processingOilLitres"||id==="processingCakeKg"?"0":"";});
+  document.getElementById("processingDate").value=localISODate();
+  updateProcessingBalance();
+  renderProcessingBatches();
+}
+function renderProcessingBatches(){
+  const sum=key=>processingBatches.reduce((total,batch)=>total+(Number(batch[key])||0),0);
+  document.getElementById("processingTotalCoconut").textContent=`${formatProcessingNumber(sum("coconutKg"))} kg`;
+  document.getElementById("processingTotalShell").textContent=`${formatProcessingNumber(sum("shellKg"))} kg`;
+  document.getElementById("processingTotalFlesh").textContent=`${formatProcessingNumber(sum("fleshKg"))} kg`;
+  document.getElementById("processingTotalOil").textContent=`${formatProcessingNumber(sum("oilLitres"))} L`;
+  const rows=document.getElementById("processingBatchRows");
+  if(!rows)return;
+  if(!processingBatches.length){rows.innerHTML='<tr><td colspan="9" class="empty">No processing batches recorded yet.</td></tr>';return;}
+  rows.innerHTML=processingBatches.map(batch=>{
+    const other=Math.max(0,(Number(batch.coconutKg)||0)-(Number(batch.shellKg)||0)-(Number(batch.fleshKg)||0));
+    return `<tr><td><b>${escapeProcessingHtml(batch.id)}</b></td><td>${escapeProcessingHtml(batch.date)}</td><td>${escapeProcessingHtml(batch.reference||"—")}</td><td>${formatProcessingNumber(batch.coconutKg)}</td><td>${formatProcessingNumber(batch.shellKg)}</td><td>${formatProcessingNumber(batch.fleshKg)}</td><td>${formatProcessingNumber(batch.oilLitres)}</td><td>${formatProcessingNumber(batch.cakeKg)}</td><td>${formatProcessingNumber(other)}</td></tr>`;
+  }).join("");
+}
+
 function switchBillingMode(mode){
   const sales=mode==='sales';
   document.getElementById('salesBillingPanel').hidden=!sales;
@@ -1969,6 +2096,21 @@ document.addEventListener("DOMContentLoaded", function(){
 #app { zoom: 1 !important; width: 100% !important; min-height: 100% !important; }
 .page#billing.active { zoom: 1 !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
 @media (min-width: 769px) { .page#billing.active { transform: none !important; } }
+</style>
+
+<style id="processing-tracker-layout">
+.processing-kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.processing-kpis .kpi{padding:15px}
+.processing-kpis .kpi h3{font-size:21px}
+.processing-card{margin-top:16px}
+.processing-form{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:13px}
+.processing-balance{margin-top:14px;padding:10px 12px;border-radius:8px;background:#edf5ed;color:#2e7043;font-size:11px;font-weight:700}
+.processing-balance.over{background:#fae5e5;color:#a53d3d}
+.processing-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+.processing-actions .permission-note{margin:0}
+.processing-card table{min-width:950px}
+@media(max-width:1050px){.processing-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.processing-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.processing-kpis,.processing-form{grid-template-columns:1fr}.processing-actions{align-items:stretch;flex-direction:column}.processing-actions .btn{width:100%}}
 </style>
 
 </body>

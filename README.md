@@ -1,5 +1,7 @@
 # Haritham Oil Store Management System
 
-Static demo preview. Open `index.html` locally or visit the GitHub Pages site when enabled.
+Live preview: https://sudheeshcwork-beep.github.io/Haritham/
 
-Demo login: `admin` / `admin123`. This is a front-end prototype; login checks and data are stored in the browser.
+Demo login: `admin` / `admin123`.
+
+The page is a front-end prototype. Coconut processing batch records are stored in browser local storage on the current device. Enter the sale rate per litre for loose coconut oil and per kg for coconut cake or shell when billing; no prices were supplied for these items.
